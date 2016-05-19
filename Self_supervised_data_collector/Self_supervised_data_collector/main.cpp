@@ -17,6 +17,7 @@
 
 void writeData(int *angle, cv::Mat img, const int count);
 int WaitUntilMoveEnd(RobotArm *robot);
+void ControllerInit(RobotArm *robot);
 
 int main(){
 	//class 
@@ -46,13 +47,12 @@ int main(){
 	dxl_write_dword(arm.DXL_Get_Port(), 8, NX::P_HOMING_OFFSET_LL, -62750, 0);
 #endif
 
-
-
 	printf("If u want program start, press 's' button.\n");
 	int temp = getch();
 	if(temp != 's')
 		return -1;
 
+	ControllerInit(&arm);
 	if(!motionHandler.robotConnect()){
 		printf("Robot can not connect.\n");
 		return -1;
@@ -143,4 +143,19 @@ int WaitUntilMoveEnd(RobotArm *robot){
 			return 1;
 	}
 	return 1;
+}
+
+void ControllerInit(RobotArm *robot){
+	int robotid[] = {1,3,5,7,9,11,13,15,17};
+	int vel[] = {1000, 1000, 1000, 1000, 1000, 1000, 50, 50, 50};
+	int Initpos[] = {0, 0, 0, 0, 0, 0, 2268, 2452, 1625};
+
+	robot->Init(5,3, robotid);
+
+	robot->TorqueOff();
+	robot->TorqueOn();
+
+	robot->SetGoalVelocity(vel);
+	robot->SetGoalPosition(Initpos);
+	//robot->SetFingerPosition(&Initpos[6]);
 }

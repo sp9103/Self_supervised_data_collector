@@ -22,6 +22,18 @@ bool InvalidMotionHandler::robotConnect(){
 	robotvis.Init(NULL, PORT);
 #endif
 
+	//robot.Arm_Get_JointValue(&angi);
+
+	////¸Æ½Ã¸Ø ¾Þ±Û Ã¼Å© - ¾²·¹±â°ª °É·¯³»±â
+	//for(int JointNum = 0; JointNum < 6; JointNum++)
+	//{
+	//	if(abs(angi[JointNum]) > robot.GetJointInfo(JointNum)->GetMaxAngleInValue() + 10)
+	//	{
+	//		cout<<"read fail"<<endl;
+	//		return;
+	//	}
+	//}
+
 	return true;
 }
 
