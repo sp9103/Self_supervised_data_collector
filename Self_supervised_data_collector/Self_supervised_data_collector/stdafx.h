@@ -19,7 +19,8 @@
 #define SWAP(a,b,t) ((t)=(a), (a)=(b), (b)=(t))
 #define RIGHT_ARM_USE /*LEFT_ARM_USE*/
 #define NUM_XEL			9
-
+#define IMG_PATH "data\\img"
+#define ANGLE_PATH "data\\angle"
 
 //Single Body Structure;
 typedef struct BodyInfo{

@@ -15,6 +15,8 @@
 #pragma comment(lib, "ARMSDK.lib") 
 #endif
 
+void writeData(int *angle, cv::Mat img, const int count);
+
 int main(){
 	//class 
 	KinectConnecter kinect;
@@ -28,13 +30,13 @@ int main(){
 	cv::Mat KinectColorImage;
 	cv::Rect RobotROI((KINECT_DEPTH_WIDTH - 160) / 2, (KINECT_DEPTH_HEIGHT- 160) / 2, 160, 160);
 	bool saveCheck = false;
-	int sampleAngleBox[9];
+	int sampleAngleBox[9], count = 0;
 	const int sampleAngleLimit[9] = {100, 100, 100, 100, 50, 50, 20, 20, 20};
 
 	//initialize
 	kinect.KinectInitialize();
-	KinectColorImage.create(KINECT_COLOR_HEIGHT, KINECT_COLOR_WIDTH, CV_8UC4);			//Kinect Color Image format BGRA 4 channel image
 	motionHandler.Initialize();
+	KinectColorImage.create(KINECT_COLOR_HEIGHT, KINECT_COLOR_WIDTH, CV_8UC4);			//Kinect Color Image format BGRA 4 channel image
 	srand(time(NULL));
 
 #ifdef RIGHT_ARM_USE
@@ -55,7 +57,7 @@ int main(){
 		kinect.GetRGBDnDepthnXYZ(&KinectMappingImage, &KinectDepthimage, &KinectXYZImage);
 		if(KinectMappingImage.cols != 0){
 			cv::Mat tempMapImg = KinectMappingImage.clone();
-			cv::rectangle(tempMapImg, cv::Rect((KINECT_DEPTH_WIDTH-160)/2, (KINECT_DEPTH_HEIGHT-160)/2, 160,160), cv::Scalar(0,255,0));
+			cv::rectangle(tempMapImg, RobotROI, cv::Scalar(0,255,0));
 			imshow("KinectMapFrame", tempMapImg);
 		}
 
@@ -80,6 +82,9 @@ int main(){
 			arm.GetPresPosition(getAngle);
 
 			//write file
+			cv::Mat cropImage = KinectMappingImage(RobotROI);
+			writeData(getAngle, cropImage, count);
+			count++;
 		}
 	}
 
@@ -88,4 +93,16 @@ int main(){
 	cv::destroyAllWindows();
 
 	return 0;
+}
+
+void writeData(int *angle, cv::Mat img, const int count){
+	char imgpath[256], anglepath[256];
+	sprintf(imgpath, "%s\\%d.bmp", IMG_PATH, count);
+	sprintf(anglepath, "%s\\%d.txt", ANGLE_PATH, count);
+	cv::imwrite(imgpath, img);
+
+	FILE *fp = fopen(anglepath, "w");
+	fprintf(fp, "%d\t", count);
+	for(int i = 0; i < NUM_XEL; i++)	fprintf(fp, "%d ", angle[i]);
+	fclose(fp);
 }
