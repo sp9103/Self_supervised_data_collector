@@ -11,29 +11,15 @@
 #define KINECT_COLOR_HEIGHT		1080
 #define KINECT_DEPTH_WIDTH		512
 #define KINECT_DEPTH_HEIGHT		424
-#define NUM_KINECTS				1
 
-#define OPENCV_WAIT_DELAY		10
-
-#define BODY_COUNT				6
+#define OPENCV_WAIT_DELAY		1
 
 #define PI						3.141592653589
-#define DEFAULT_PATH "D:\\ImageData\\RGBD"
-#define TRANSFORM_SIZE			240
 
 #define SWAP(a,b,t) ((t)=(a), (a)=(b), (b)=(t))
+#define RIGHT_ARM_USE /*LEFT_ARM_USE*/
+#define NUM_XEL			9
 
-////Single Body Structure;
-//typedef struct BodyInfo{
-//	Joint JointPos[JointType_Count];
-//	UINT64 BodyID;
-//}BodyInfo;
-
-////Store sensor out Body information
-//typedef struct SkeletonInfo{
-//	int Count;												//ÇöÀç ÃßÀûÇÏ°í ÀÖ´Â ½ºÄÌ·¹Åæ °¹¼ö
-//	BodyInfo InfoBody[BODY_COUNT];
-//}SkeletonInfo;
 
 //Single Body Structure;
 typedef struct BodyInfo{

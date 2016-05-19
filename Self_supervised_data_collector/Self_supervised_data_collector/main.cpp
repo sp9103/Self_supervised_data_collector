@@ -8,8 +8,6 @@
 #include "Robot\RobotArm.h"
 #include "InvalidMotionHandler.h"
 
-using namespace armsdk;
-
 #ifdef _DEBUG
 #pragma comment(lib, "ARMSDKd.lib")
 #endif
@@ -17,15 +15,11 @@ using namespace armsdk;
 #pragma comment(lib, "ARMSDK.lib") 
 #endif
 
-#define RIGHT_ARM_USE /*LEFT_ARM_USE*/
-#define NUM_XEL			9
-
 int main(){
 	//class 
 	KinectConnecter kinect;
 	RobotArm arm;
 	InvalidMotionHandler motionHandler;
-	armsdk::RobotInfo robot;
 
 	//variable
 	cv::Mat KinectMappingImage;
@@ -40,25 +34,19 @@ int main(){
 	//initialize
 	kinect.KinectInitialize();
 	KinectColorImage.create(KINECT_COLOR_HEIGHT, KINECT_COLOR_WIDTH, CV_8UC4);			//Kinect Color Image format BGRA 4 channel image
+	motionHandler.Initialize();
 	srand(time(NULL));
 
 #ifdef RIGHT_ARM_USE
-	//RightArm
-	robot.AddJoint(  0.0,  ML_PI_2,    0.0,      0.0, ML_PI, -ML_PI, 251000, -251000, ML_PI, -ML_PI, 1);
-	robot.AddJoint(  0.0, -ML_PI_2,    0.0,      0.0, ML_PI, -ML_PI, 251000, -251000, ML_PI, -ML_PI, 3);
-	robot.AddJoint( 30.0, -ML_PI_2,  246.0,      0.0, ML_PI, -ML_PI, 251000, -251000, ML_PI, -ML_PI, 5);
-	robot.AddJoint(-30.0,  ML_PI_2,    0.0,  ML_PI_2, ML_PI, -ML_PI, 251000, -251000, ML_PI, -ML_PI, 7);
-	robot.AddJoint(  0.0, -ML_PI_2,  216.0,      0.0, ML_PI, -ML_PI, 151875, -151875, ML_PI, -ML_PI, 9);
-	robot.AddJoint(  0.0,  ML_PI_2,    0.0,      0.0, ML_PI, -ML_PI, 151875, -151875, ML_PI, -ML_PI, 11);
+	dxl_write_dword(arm.DXL_Get_Port(), 7, NX::P_HOMING_OFFSET_LL,  62750, 0);
 #elif defined LEFT_ARM_USE
-	//Leftarm
-	robot.AddJoint(  0.0, -ML_PI_2,    0.0,      0.0, ML_PI, -ML_PI, 251000, -251000, ML_PI, -ML_PI, 2);
-	robot.AddJoint(  0.0,  ML_PI_2,    0.0,      0.0, ML_PI, -ML_PI, 251000, -251000, ML_PI, -ML_PI, 4);
-	robot.AddJoint( 30.0,  ML_PI_2,  246.0,      0.0, ML_PI, -ML_PI, 251000, -251000, ML_PI, -ML_PI, 6);
-	robot.AddJoint(-30.0, -ML_PI_2,    0.0, -ML_PI_2, ML_PI, -ML_PI, 251000, -251000, ML_PI, -ML_PI, 8);
-	robot.AddJoint(  0.0,  ML_PI_2,  216.0,      0.0, ML_PI, -ML_PI, 151875, -151875, ML_PI, -ML_PI, 10);
-	robot.AddJoint(  0.0, -ML_PI_2,    0.0,      0.0, ML_PI, -ML_PI, 151875, -151875, ML_PI, -ML_PI, 12);
+	dxl_write_dword(arm.DXL_Get_Port(), 8, NX::P_HOMING_OFFSET_LL, -62750, 0);
 #endif
+
+	if(!motionHandler.robotConnect()){
+		printf("Robot can not connect.\n");
+		return -1;
+	}
 
 	while(1){
 		char key = cv::waitKey(10);
@@ -86,6 +74,10 @@ int main(){
 				if(motionHandler.InvalidCheck(sampleAngleBox))
 					break;
 			}
+
+			//실제 움직임
+			int getAngle[9];
+			arm.GetPresPosition(getAngle);
 
 			//write file
 		}
