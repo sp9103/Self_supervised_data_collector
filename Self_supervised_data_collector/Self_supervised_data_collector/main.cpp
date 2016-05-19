@@ -80,6 +80,8 @@ int main(){
 			//실제 움직임
 			int getAngle[9];
 			arm.GetPresPosition(getAngle);
+			for(int i = 0; i < NUM_XEL; i++)	getAngle[i] += sampleAngleBox[i];
+			arm.SetGoalPosition(getAngle);
 
 			//write file
 			cv::Mat cropImage = KinectMappingImage(RobotROI);
