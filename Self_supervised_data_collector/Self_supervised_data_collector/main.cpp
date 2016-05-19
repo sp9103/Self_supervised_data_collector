@@ -16,6 +16,7 @@
 #endif
 
 void writeData(int *angle, cv::Mat img, const int count);
+int WaitUntilMoveEnd(RobotArm *robot);
 
 int main(){
 	//class 
@@ -83,11 +84,13 @@ int main(){
 
 			//실제 움직임
 			arm.SetGoalPosition(tmpAngle);
+			WaitUntilMoveEnd(&arm);
 
 			//write file
 			cv::Mat cropImage = KinectMappingImage(RobotROI);
 			writeData(getAngle, cropImage, count);
 			count++;
+			printf("[%d] data saveComplete.\n");
 		}
 	}
 
@@ -108,4 +111,29 @@ void writeData(int *angle, cv::Mat img, const int count){
 	fprintf(fp, "%d\t", count);
 	for(int i = 0; i < NUM_XEL; i++)	fprintf(fp, "%d ", angle[i]);
 	fclose(fp);
+}
+
+int isAllZero(int src[]){
+	for(int i = 0; i < NUM_XEL; i++){
+		if(src[i] != 0)
+			return -1;
+	}
+
+	return 1;
+}
+
+int WaitUntilMoveEnd(RobotArm *robot){
+	int checkTerm = 10;
+	int presVel[NUM_XEL];
+	int fingerLoad[NUM_FINGER];
+
+	while(1){
+		_sleep(33);
+		robot->GetPresVelocity(presVel);
+		robot->GetFingerLoad(fingerLoad);
+
+		if(isAllZero(presVel) == 1)
+			return 1;
+	}
+	return 1;
 }

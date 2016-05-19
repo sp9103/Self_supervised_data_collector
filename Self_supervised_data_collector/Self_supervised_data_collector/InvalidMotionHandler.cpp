@@ -39,4 +39,5 @@ void InvalidMotionHandler::Initialize(){
 	robot.AddJoint(  0.0,  ML_PI_2,  216.0,      0.0, ML_PI, -ML_PI, 151875, -151875, ML_PI, -ML_PI, 10);
 	robot.AddJoint(  0.0, -ML_PI_2,    0.0,      0.0, ML_PI, -ML_PI, 151875, -151875, ML_PI, -ML_PI, 12);
 #endif
+	kin.InitRobot(&robot);
 }

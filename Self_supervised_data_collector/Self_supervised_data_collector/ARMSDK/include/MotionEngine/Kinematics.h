@@ -21,9 +21,11 @@ namespace armsdk
 
 	public:
 		Kinematics(RobotInfo *_mRobot);
+		Kinematics(){};
 		~Kinematics();
 		
 		void RobotInfoReload(void);
+		void InitRobot(RobotInfo *_mRobot);
 
 		matd Forward(vecd angle);
 		matd Forward(vecd angle, Pose3D *pose);

@@ -14,5 +14,6 @@ public:
 
 private:
 	armsdk::RobotInfo robot;
+	armsdk::Kinematics kin;
 };
 
