@@ -12,11 +12,15 @@ InvalidMotionHandler::~InvalidMotionHandler(void)
 
 
 bool InvalidMotionHandler::InvalidCheck(int *angle){
+	//TO-DO
 
 	return true;
 }
 
 bool InvalidMotionHandler::robotConnect(){
+#ifdef USING_SIMULATOR
+	robotvis.Init(NULL, PORT);
+#endif
 
 	return true;
 }
@@ -40,4 +44,18 @@ void InvalidMotionHandler::Initialize(){
 	robot.AddJoint(  0.0, -ML_PI_2,    0.0,      0.0, ML_PI, -ML_PI, 151875, -151875, ML_PI, -ML_PI, 12);
 #endif
 	kin.InitRobot(&robot);
+
+#ifdef USING_SIMULATOR
+	HANDLE _TThreadHandle = (HANDLE)_beginthreadex(NULL, 0, simulateThread, NULL, 0, NULL);
+#endif
+}
+
+UINT WINAPI InvalidMotionHandler::simulateThread(LPVOID param){
+	system("simulator\\RobotSimulator.exe");
+
+	return 1;
+}
+
+void InvalidMotionHandler::Deinitialize(){
+
 }

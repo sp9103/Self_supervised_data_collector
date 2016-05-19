@@ -36,6 +36,9 @@
     <ClCompile Include="InvalidMotionHandler.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="RobotVisServer.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="KinectConnecter.h">
@@ -57,6 +60,9 @@
       <Filter>Robot</Filter>
     </ClInclude>
     <ClInclude Include="InvalidMotionHandler.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="RobotVisServer.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

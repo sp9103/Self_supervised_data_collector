@@ -46,6 +46,13 @@ int main(){
 	dxl_write_dword(arm.DXL_Get_Port(), 8, NX::P_HOMING_OFFSET_LL, -62750, 0);
 #endif
 
+
+
+	printf("If u want program start, press 's' button.\n");
+	int temp = getch();
+	if(temp != 's')
+		return -1;
+
 	if(!motionHandler.robotConnect()){
 		printf("Robot can not connect.\n");
 		return -1;
