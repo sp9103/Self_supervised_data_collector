@@ -1,9 +1,12 @@
 #include <stdio.h>
 #include <afx.h>
+#include <time.h>
+#include <stdlib.h>
 
 #include "ARMSDK\include\ARMSDK.h"
 #include "KinectConnecter.h"
 #include "Robot\RobotArm.h"
+#include "InvalidMotionHandler.h"
 
 using namespace armsdk;
 
@@ -21,6 +24,7 @@ int main(){
 	//class 
 	KinectConnecter kinect;
 	RobotArm arm;
+	InvalidMotionHandler motionHandler;
 	armsdk::RobotInfo robot;
 
 	//variable
@@ -30,10 +34,13 @@ int main(){
 	cv::Mat KinectColorImage;
 	cv::Rect RobotROI((KINECT_DEPTH_WIDTH - 160) / 2, (KINECT_DEPTH_HEIGHT- 160) / 2, 160, 160);
 	bool saveCheck = false;
+	int sampleAngleBox[9];
+	const int sampleAngleLimit[9] = {100, 100, 100, 100, 50, 50, 20, 20, 20};
 
 	//initialize
 	kinect.KinectInitialize();
 	KinectColorImage.create(KINECT_COLOR_HEIGHT, KINECT_COLOR_WIDTH, CV_8UC4);			//Kinect Color Image format BGRA 4 channel image
+	srand(time(NULL));
 
 #ifdef RIGHT_ARM_USE
 	//RightArm
@@ -70,7 +77,17 @@ int main(){
 
 		//실제 저장부
 		if(saveCheck){
+			//샘플링된 모션이 가능한 모션인지를 체크
+			while(1){
+				//angle sampling - limit 이내의 각도 샘플링
+				for(int i = 0; i < NUM_XEL; i++)		sampleAngleBox[i] = rand() % sampleAngleLimit[i];
 
+				//motion check
+				if(motionHandler.InvalidCheck(sampleAngleBox))
+					break;
+			}
+
+			//write file
 		}
 	}
 

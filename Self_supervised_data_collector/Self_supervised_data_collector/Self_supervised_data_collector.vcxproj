@@ -80,6 +80,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="InvalidMotionHandler.cpp" />
     <ClCompile Include="KinectConnecter.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Robot\DynamixelPro.cpp" />
@@ -87,6 +88,7 @@
     <ClCompile Include="Robot\RobotArm.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="InvalidMotionHandler.h" />
     <ClInclude Include="KinectConnecter.h" />
     <ClInclude Include="Robot\dynamixel.h" />
     <ClInclude Include="Robot\DynamixelPro.h" />
