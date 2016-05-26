@@ -63,7 +63,7 @@ public class SocketClient : MonoBehaviour {
 		JointScale [4] = 12.0f;
 
 		Debug.Log ("Socket Client Start service..");
-		TEST ();
+		//TEST ();
 		clientInit ();
 	}
 	

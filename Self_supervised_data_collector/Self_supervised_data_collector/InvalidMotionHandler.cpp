@@ -60,7 +60,7 @@ void InvalidMotionHandler::Initialize(){
 }
 
 UINT WINAPI InvalidMotionHandler::simulateThread(LPVOID param){
-	system("simulator\\RobotSimulator.exe");
+	system("..\\robotArmVis\\RobotSimulator.exe");
 
 	return 1;
 }
