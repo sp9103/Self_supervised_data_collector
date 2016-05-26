@@ -18,10 +18,6 @@ bool InvalidMotionHandler::InvalidCheck(int *angle){
 }
 
 bool InvalidMotionHandler::robotConnect(){
-#ifdef USING_SIMULATOR
-	robotvis.Init(NULL, PORT);
-#endif
-
 	//robot.Arm_Get_JointValue(&angi);
 
 	////¸Æ½Ã¸Ø ¾Þ±Û Ã¼Å© - ¾²·¹±â°ª °É·¯³»±â
@@ -58,7 +54,8 @@ void InvalidMotionHandler::Initialize(){
 	kin.InitRobot(&robot);
 
 #ifdef USING_SIMULATOR
-	HANDLE _TThreadHandle = (HANDLE)_beginthreadex(NULL, 0, simulateThread, NULL, 0, NULL);
+	robotvisServer.Init(NULL, PORT);																//server start
+	HANDLE _TThreadHandle = (HANDLE)_beginthreadex(NULL, 0, simulateThread, NULL, 0, NULL);			//simulator start - TO-DO : How to exit thread safely
 #endif
 }
 
