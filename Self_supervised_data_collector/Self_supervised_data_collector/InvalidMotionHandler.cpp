@@ -15,7 +15,17 @@ bool InvalidMotionHandler::InvalidCheck(int *angle){
 	bool retVal = false;
 
 	//관심영역 안인지 밖인지를 체크
+	veci angi(6);
+	vecd angd;
+	armsdk::Pose3D endEffector;
+	angi.resize(6);
+	for(int i = 0; i < 6; i++)		angi[i] = angle[i];
+	angd = kin.Value2Rad(angi);
+	kin.Forward(angd, &endEffector);
 
+	//EndEffector ROI check
+
+#ifdef USING_SIMULATOR
 	//시뮬레이터 체크
 	RobotInfoData sendData;
 	for(int i = 0; i < 6; i++)
@@ -30,6 +40,7 @@ bool InvalidMotionHandler::InvalidCheck(int *angle){
 	sendData.upperRight.y = -30.0f;
 	sendData.upperRight.z = 70.0f;
 	retVal = robotvisServer.SendAndCheck(sendData);
+#endif
 
 	return retVal;
 }
