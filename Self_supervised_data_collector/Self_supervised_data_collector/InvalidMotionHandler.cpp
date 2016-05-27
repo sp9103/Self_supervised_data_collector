@@ -24,6 +24,8 @@ bool InvalidMotionHandler::InvalidCheck(int *angle){
 	kin.Forward(angd, &endEffector);
 
 	//EndEffector ROI check
+	if(true /*TO-DO*/)	retVal = true;
+	else				retVal = false;
 
 #ifdef USING_SIMULATOR
 	//½Ã¹Ä·¹ÀÌÅÍ Ã¼Å©
@@ -45,18 +47,19 @@ bool InvalidMotionHandler::InvalidCheck(int *angle){
 	return retVal;
 }
 
-bool InvalidMotionHandler::robotConnect(){
-	//robot.Arm_Get_JointValue(&angi);
+bool InvalidMotionHandler::robotConnect(RobotArm *robotArm){
+	veci angi(6);
+	robotArm->Arm_Get_JointValue(&angi);
 
-	////¸Æ½Ã¸Ø ¾Þ±Û Ã¼Å© - ¾²·¹±â°ª °É·¯³»±â
-	//for(int JointNum = 0; JointNum < 6; JointNum++)
-	//{
-	//	if(abs(angi[JointNum]) > robot.GetJointInfo(JointNum)->GetMaxAngleInValue() + 10)
-	//	{
-	//		cout<<"read fail"<<endl;
-	//		return;
-	//	}
-	//}
+	//¸Æ½Ã¸Ø ¾Þ±Û Ã¼Å© - ¾²·¹±â°ª °É·¯³»±â
+	for(int JointNum = 0; JointNum < 6; JointNum++)
+	{
+		if(abs(angi[JointNum]) > robot.GetJointInfo(JointNum)->GetMaxAngleInValue() + 10)
+		{
+			cout<<"read fail"<<endl;
+			return false;
+		}
+	}
 
 	return true;
 }

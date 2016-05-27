@@ -3,6 +3,7 @@
 #include "ARMSDK\include\ARMSDK.h"
 #include "stdafx.h"
 #include "RobotVisServer.h"
+#include "Robot\RobotArm.h"
 
 #define USING_SIMULATOR
 #define PORT 2252
@@ -17,7 +18,7 @@ public:
 	void Initialize();
 	void Deinitialize();
 	bool InvalidCheck(int *angle);
-	bool robotConnect();
+	bool robotConnect(RobotArm *robot);
 
 private:
 	armsdk::RobotInfo robot;

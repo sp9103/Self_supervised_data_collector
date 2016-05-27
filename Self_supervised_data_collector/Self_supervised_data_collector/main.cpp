@@ -53,7 +53,7 @@ int main(){
 		return -1;
 
 	ControllerInit(&arm);
-	if(!motionHandler.robotConnect()){
+	if(!motionHandler.robotConnect(&arm)){
 		printf("Robot can not connect.\n");
 		return -1;
 	}
