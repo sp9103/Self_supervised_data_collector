@@ -7,6 +7,7 @@
 #include "DynamixelPro.h"
 
 #define MAX_MOVING_DEGREE					10
+//#define USING_FINGER
 
 class RobotArm
 {
@@ -48,6 +49,8 @@ private:
 	SerialPort *Port_;
 
 	DynamixelPro jointcontroller_;
+#ifdef USING_FINGER
 	MX_controller fingercontroller_;
+#endif
 };
 

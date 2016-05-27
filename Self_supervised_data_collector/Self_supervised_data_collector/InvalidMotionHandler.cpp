@@ -67,6 +67,7 @@ bool InvalidMotionHandler::robotConnect(RobotArm *robotArm){
 		if(abs(angi[JointNum]) > robot.GetJointInfo(JointNum)->GetMaxAngleInValue() + 10)
 		{
 			cout<<"read fail"<<endl;
+			printf("Data Fail %d\n", angi[JointNum]);
 			return false;
 		}
 	}
