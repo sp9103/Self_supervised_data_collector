@@ -3,16 +3,26 @@
 
 InvalidMotionHandler::InvalidMotionHandler(void)
 {
+	DeinitCheck = true;
 }
 
 
 InvalidMotionHandler::~InvalidMotionHandler(void)
 {
+	if(!DeinitCheck)
+		Deinitialize();
 }
 
 //true == colision detected. false == safe
 bool InvalidMotionHandler::InvalidCheck(int *angle){
 	bool retVal = false;
+	const int FingerMaxLimit[3] = {};
+	const int FingerMinLimit[3] = {};
+
+	for(int i = 0; i < 3; i++)
+		if(angle[NUM_JOINT + i] < FingerMinLimit[i] || angle[NUM_JOINT + i] > FingerMaxLimit[i])
+			return false;
+
 
 	//관심영역 안인지 밖인지를 체크
 	veci angi(6);
@@ -65,6 +75,7 @@ bool InvalidMotionHandler::robotConnect(RobotArm *robotArm){
 }
 
 void InvalidMotionHandler::Initialize(){
+	DeinitCheck = false;
 #ifdef RIGHT_ARM_USE
 	//RightArm
 	robot.AddJoint(  0.0,  ML_PI_2,    0.0,      0.0, ML_PI, -ML_PI, 251000, -251000, ML_PI, -ML_PI, 1);
@@ -85,17 +96,19 @@ void InvalidMotionHandler::Initialize(){
 	kin.InitRobot(&robot);
 
 #ifdef USING_SIMULATOR
-	robotvisServer.Init(NULL, PORT);																//server start
 	HANDLE _TThreadHandle = (HANDLE)_beginthreadex(NULL, 0, simulateThread, NULL, 0, NULL);			//simulator start - TO-DO : How to exit thread safely
+	robotvisServer.Init(NULL, PORT);																//server start
 #endif
 }
 
 UINT WINAPI InvalidMotionHandler::simulateThread(LPVOID param){
-	system("..\\robotArmVis\\RobotSimulator.exe");
+	system("..\\..\\robotArmVis\\RobotSimulator.exe");
 
 	return 1;
 }
 
 void InvalidMotionHandler::Deinitialize(){
-
+	HWND handle = FindWindow(NULL, TEXT("robotArmVis"));
+	SendMessage(handle, WM_CLOSE, 0, 0);
+	DeinitCheck = true;
 }

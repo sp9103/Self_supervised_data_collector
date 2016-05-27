@@ -104,6 +104,7 @@ int main(){
 	//Deallocation
 	kinect.KinectDestroy();
 	cv::destroyAllWindows();
+	motionHandler.Deinitialize();
 
 	return 0;
 }
@@ -148,14 +149,14 @@ int WaitUntilMoveEnd(RobotArm *robot){
 void ControllerInit(RobotArm *robot){
 	int robotid[] = {1,3,5,7,9,11,13,15,17};
 	int vel[] = {1000, 1000, 1000, 1000, 1000, 1000, 50, 50, 50};
-	int Initpos[] = {0, 0, 0, 0, 0, 0, 2268, 2452, 1625};
+	//int Initpos[] = {0, 0, 0, 0, 0, 0, 2268, 2452, 1625};
 
-	robot->Init(5,3, robotid);
+	robot->Init(6,3, robotid);
 
 	robot->TorqueOff();
 	robot->TorqueOn();
 
 	robot->SetGoalVelocity(vel);
-	robot->SetGoalPosition(Initpos);
+	//robot->SetGoalPosition(Initpos);
 	//robot->SetFingerPosition(&Initpos[6]);
 }

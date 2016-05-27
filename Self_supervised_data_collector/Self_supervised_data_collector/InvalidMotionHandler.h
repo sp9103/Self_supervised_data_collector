@@ -24,6 +24,7 @@ private:
 	armsdk::RobotInfo robot;
 	armsdk::Kinematics kin;
 	RobotVisServer robotvisServer;
+	bool DeinitCheck;
 
 	static UINT WINAPI simulateThread(LPVOID param); // 쓰레드 함수.
 };
