@@ -10,11 +10,28 @@ InvalidMotionHandler::~InvalidMotionHandler(void)
 {
 }
 
-
+//true == colision detected. false == safe
 bool InvalidMotionHandler::InvalidCheck(int *angle){
-	//TO-DO
+	bool retVal = false;
 
-	return true;
+	//관심영역 안인지 밖인지를 체크
+
+	//시뮬레이터 체크
+	RobotInfoData sendData;
+	for(int i = 0; i < 6; i++)
+		sendData.Angle[i] = angle[i];
+	sendData.Thumb.x = -40.0f;
+	sendData.Thumb.y = 0.0f;
+	sendData.Thumb.z = 70.0f;
+	sendData.upperLeft.x = 40.0f;
+	sendData.upperLeft.y = 30.0f;
+	sendData.upperLeft.z = 70.0f;
+	sendData.upperRight.x = 40.0f;
+	sendData.upperRight.y = -30.0f;
+	sendData.upperRight.z = 70.0f;
+	retVal = robotvisServer.SendAndCheck(sendData);
+
+	return retVal;
 }
 
 bool InvalidMotionHandler::robotConnect(){

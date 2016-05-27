@@ -152,7 +152,7 @@ public class SocketClient : MonoBehaviour {
 	}
 
 	void OnDestroy(){
-		TEST ();
+		//TEST ();
 		clientDeinit ();
 	}
 
