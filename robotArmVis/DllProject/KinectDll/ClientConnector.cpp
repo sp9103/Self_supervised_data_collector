@@ -9,6 +9,8 @@
 #define EXPORT_API __declspec(dllexport)
 #define PORT 2252
 
+#define RIGHT_ARM_USE /*LEFT_ARM_USE*/
+
 using namespace armsdk;
 using namespace std;
 
@@ -23,6 +25,15 @@ extern "C"{
 	}
 
 	void EXPORT_API clientInit(){
+#ifdef RIGHT_ARM_USE
+		//RightArm
+		robot.AddJoint(  0.0,  ML_PI_2,    0.0,      0.0, ML_PI, -ML_PI, 251000, -251000, ML_PI, -ML_PI, 1);
+		robot.AddJoint(  0.0, -ML_PI_2,    0.0,      0.0, ML_PI, -ML_PI, 251000, -251000, ML_PI, -ML_PI, 3);
+		robot.AddJoint( 30.0, -ML_PI_2,  246.0,      0.0, ML_PI, -ML_PI, 251000, -251000, ML_PI, -ML_PI, 5);
+		robot.AddJoint(-30.0,  ML_PI_2,    0.0,  ML_PI_2, ML_PI, -ML_PI, 251000, -251000, ML_PI, -ML_PI, 7);
+		robot.AddJoint(  0.0, -ML_PI_2,  216.0,      0.0, ML_PI, -ML_PI, 151875, -151875, ML_PI, -ML_PI, 9);
+		robot.AddJoint(  0.0,  ML_PI_2,    0.0,      0.0, ML_PI, -ML_PI, 151875, -151875, ML_PI, -ML_PI, 11);
+#elif defined LEFT_ARM_USE
 		//Leftarm
 		robot.AddJoint(  0.0, -ML_PI_2,    0.0,      0.0, ML_PI, -ML_PI, 251000, -251000, ML_PI, -ML_PI, 2);
 		robot.AddJoint(  0.0,  ML_PI_2,    0.0,      0.0, ML_PI, -ML_PI, 251000, -251000, ML_PI, -ML_PI, 4);
@@ -30,7 +41,7 @@ extern "C"{
 		robot.AddJoint(-30.0, -ML_PI_2,    0.0, -ML_PI_2, ML_PI, -ML_PI, 251000, -251000, ML_PI, -ML_PI, 8);
 		robot.AddJoint(  0.0,  ML_PI_2,  216.0,      0.0, ML_PI, -ML_PI, 151875, -151875, ML_PI, -ML_PI, 10);
 		robot.AddJoint(  0.0, -ML_PI_2,    0.0,      0.0, ML_PI, -ML_PI, 151875, -151875, ML_PI, -ML_PI, 12);
-
+#endif
 		kin.setRobotInfo(&robot);
 
 		client.Init(NULL, PORT);
@@ -62,9 +73,9 @@ extern "C"{
 
 		//좌표로 변환
 		/*for(int i = 0; i < 6; i++)
-			(angi)[i] = temp.Angle[i];
+		(angi)[i] = temp.Angle[i];
 		kin.Forward(kin.Value2Rad(angi), pos);*/
-		
+
 		//memcpy(position, pos, sizeof(float)*(3*7 + 3*3));
 
 		//손 각도

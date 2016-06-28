@@ -7,7 +7,7 @@
 #include "DynamixelPro.h"
 
 #define MAX_MOVING_DEGREE					10
-//#define USING_FINGER
+#define USING_FINGER
 
 class RobotArm
 {

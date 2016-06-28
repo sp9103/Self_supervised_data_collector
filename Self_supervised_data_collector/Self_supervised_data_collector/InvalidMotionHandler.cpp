@@ -72,6 +72,22 @@ bool InvalidMotionHandler::robotConnect(RobotArm *robotArm){
 		}
 	}
 
+#ifdef USING_SIMULATOR
+	RobotInfoData sendData;
+	for(int i = 0; i < 6; i++)
+		sendData.Angle[i] = angi[i];
+	sendData.Thumb.x = -40.0f;
+	sendData.Thumb.y = 0.0f;
+	sendData.Thumb.z = 70.0f;
+	sendData.upperLeft.x = 40.0f;
+	sendData.upperLeft.y = 30.0f;
+	sendData.upperLeft.z = 70.0f;
+	sendData.upperRight.x = 40.0f;
+	sendData.upperRight.y = -30.0f;
+	sendData.upperRight.z = 70.0f;
+	robotvisServer.SendAndCheck(sendData);
+#endif
+
 	return true;
 }
 
