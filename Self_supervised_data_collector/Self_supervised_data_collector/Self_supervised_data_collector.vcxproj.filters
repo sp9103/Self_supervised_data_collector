@@ -16,6 +16,9 @@
     <Filter Include="Robot">
       <UniqueIdentifier>{1ba269f8-21ce-44ed-9f03-fc76636ec840}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ColorBasedTracker">
+      <UniqueIdentifier>{e7f5da3b-82fa-4804-a28e-b47c8fadf633}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -38,6 +41,12 @@
     </ClCompile>
     <ClCompile Include="RobotVisServer.cpp">
       <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="ColorBasedTracker.cpp">
+      <Filter>ColorBasedTracker</Filter>
+    </ClCompile>
+    <ClCompile Include="BlobLabeling.cpp">
+      <Filter>ColorBasedTracker</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -64,6 +73,12 @@
     </ClInclude>
     <ClInclude Include="Robot\dynamixel.h">
       <Filter>Robot</Filter>
+    </ClInclude>
+    <ClInclude Include="ColorBasedTracker.h">
+      <Filter>ColorBasedTracker</Filter>
+    </ClInclude>
+    <ClInclude Include="BlobLabeling.h">
+      <Filter>ColorBasedTracker</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

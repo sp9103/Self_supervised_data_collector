@@ -4,6 +4,9 @@
 InvalidMotionHandler::InvalidMotionHandler(void)
 {
 	DeinitCheck = true;
+
+	ROI3D.first = cv::Point3f(340.f, -225.f, -100.f);
+	ROI3D.second = cv::Point3f(500.f, 127.f, 50.f);
 }
 
 
@@ -33,8 +36,7 @@ bool InvalidMotionHandler::InvalidCheck(int *angle){
 	angd = kin.Value2Rad(angi);
 	kin.Forward(angd, &endEffector);
 
-	//EndEffector ROI check
-	if(true /*TO-DO*/)	retVal = true;
+	if(inROI(endEffector))	retVal = true;
 	else				retVal = false;
 
 #ifdef USING_SIMULATOR
@@ -76,15 +78,16 @@ bool InvalidMotionHandler::robotConnect(RobotArm *robotArm){
 	RobotInfoData sendData;
 	for(int i = 0; i < 6; i++)
 		sendData.Angle[i] = angi[i];
-	sendData.Thumb.x = -40.0f;
+	sendData.Thumb.x = 40.0f;
 	sendData.Thumb.y = 0.0f;
 	sendData.Thumb.z = 70.0f;
-	sendData.upperLeft.x = 40.0f;
+	sendData.upperLeft.x = -40.0f;
 	sendData.upperLeft.y = 30.0f;
 	sendData.upperLeft.z = 70.0f;
-	sendData.upperRight.x = 40.0f;
+	sendData.upperRight.x = -40.0f;
 	sendData.upperRight.y = -30.0f;
 	sendData.upperRight.z = 70.0f;
+	fingerTransform(&sendData);
 	robotvisServer.SendAndCheck(sendData);
 #endif
 
@@ -124,8 +127,77 @@ UINT WINAPI InvalidMotionHandler::simulateThread(LPVOID param){
 	return 1;
 }
 
+void InvalidMotionHandler::fingerTransform(RobotInfoData *src){
+	veci angi(6);
+	for(int i = 0; i < 6; i++)	angi[i] = src->Angle[i];
+	vecd angd = kin.Value2Rad(angi);
+	armsdk::Pose3D CurrentPose, xaxis, yaxis, zaxis;
+	kin.EndAxis(angd, &CurrentPose, &xaxis, &yaxis, &zaxis);
+
+	cv::Mat m_RotMat(3,3,CV_32FC1);
+
+	cv::Mat invR;
+	invR.create(3,3,CV_32FC1);
+
+	invR.at<float>(0,0) = xaxis.x;
+	invR.at<float>(1,0) = xaxis.y;
+	invR.at<float>(2,0) = xaxis.z;
+
+	invR.at<float>(0,1) = yaxis.x;
+	invR.at<float>(1,1) = yaxis.y;
+	invR.at<float>(2,1) = yaxis.z;
+
+	invR.at<float>(0,2) = zaxis.x;
+	invR.at<float>(1,2) = zaxis.y;
+	invR.at<float>(2,2) = zaxis.z;
+
+	//m_RotMat = invR.t();
+
+	rot(invR, &src->Thumb);
+	rot(invR, &src->upperLeft);
+	rot(invR, &src->upperRight);
+}
+
+void InvalidMotionHandler::rot(cv::Mat rotMat, FingerInfo *fin){
+	cv::Mat temp, resultMat;
+	temp.create(3,1,CV_32FC1);
+	resultMat.create(3,1,CV_32FC1);
+
+	temp.at<float>(0,0) = fin->x;
+	temp.at<float>(1,0) = fin->y;
+	temp.at<float>(2,0) = fin->z;
+
+	resultMat = rotMat * temp;
+
+	fin->x = resultMat.at<float>(0,0);
+	fin->y = resultMat.at<float>(1,0);
+	fin->z = resultMat.at<float>(2,0);
+}
+
 void InvalidMotionHandler::Deinitialize(){
 	HWND handle = FindWindow(NULL, TEXT("robotArmVis"));
 	SendMessage(handle, WM_CLOSE, 0, 0);
 	DeinitCheck = true;
+}
+
+armsdk::Pose3D InvalidMotionHandler::ForwardEnd(RobotArm *robotArm){
+	veci angi(6);
+
+	armsdk::Pose3D endeffector;
+	robotArm->Arm_Get_JointValue(&angi);
+	
+	vecd angd = kin.Value2Rad(angi);
+	kin.Forward(angd, &endeffector);
+
+	printf("%f %f %f\n", endeffector.x, endeffector.y, endeffector.z);
+	return endeffector;
+}
+
+bool InvalidMotionHandler::inROI(armsdk::Pose3D end){
+	if(ROI3D.first.x < end.x && end.x < ROI3D.second.x)
+		if(ROI3D.first.y < end.y && end.y < ROI3D.second.y)
+			if(ROI3D.first.z < end.z && end.z < ROI3D.second.z)
+				return true;
+
+	return false;
 }
