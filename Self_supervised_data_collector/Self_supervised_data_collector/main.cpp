@@ -33,7 +33,7 @@ int main(){
 	cv::Rect RobotROI((KINECT_DEPTH_WIDTH - 160) / 2, (KINECT_DEPTH_HEIGHT- 160) / 2, 160, 160);
 	bool saveCheck = false;
 	int sampleAngleBox[9], count = 0;
-	const int sampleAngleLimit[9] = {100, 100, 100, 100, 50, 50, 20, 20, 20};
+	const int sampleAngleLimit[9] = {1000, 1000, 1000, 1000, 500, 500, 20, 20, 20};
 
 	//initialize
 	kinect.KinectInitialize();
@@ -53,6 +53,10 @@ int main(){
 		motionHandler.Deinitialize();
 		return -1;
 	}
+
+	//arm.TorqueOff();
+	printf("If u want to start program, press any key.\n");
+	getch();
 
 	while(1){
 		char key = cv::waitKey(10);
@@ -88,6 +92,7 @@ int main(){
 			//실제 움직임
 			arm.SetGoalPosition(tmpAngle);
 			WaitUntilMoveEnd(&arm);
+			arm.GetGoalPosition(getAngle);
 
 			//write file
 			cv::Mat cropImage = KinectMappingImage(RobotROI);

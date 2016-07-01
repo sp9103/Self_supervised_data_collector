@@ -19,12 +19,15 @@ InvalidMotionHandler::~InvalidMotionHandler(void)
 //true == colision detected. false == safe
 bool InvalidMotionHandler::InvalidCheck(int *angle){
 	bool retVal = false;
-	const int FingerMaxLimit[3] = {};
-	const int FingerMinLimit[3] = {};
+	const int FingerMaxLimit[3] = {400, 2050, 2950};
+	const int FingerMinLimit[3] = {-66, 1650, 2050};
 
-	for(int i = 0; i < 3; i++)
-		if(angle[NUM_JOINT + i] < FingerMinLimit[i] || angle[NUM_JOINT + i] > FingerMaxLimit[i])
+	for(int i = 0; i < 3; i++){
+		int angleOrigin = angle[NUM_JOINT + i];
+		int angleLim = angleOrigin > 3072 ? (angleOrigin - 4096) : angleOrigin;
+		if(angleLim < FingerMinLimit[i] || angleLim > FingerMaxLimit[i])
 			return false;
+	}
 
 
 	//관심영역 안인지 밖인지를 체크
@@ -36,23 +39,23 @@ bool InvalidMotionHandler::InvalidCheck(int *angle){
 	angd = kin.Value2Rad(angi);
 	kin.Forward(angd, &endEffector);
 
-	if(inROI(endEffector))	retVal = true;
-	else				retVal = false;
+	if(!inROI(endEffector))	return false;
 
 #ifdef USING_SIMULATOR
 	//시뮬레이터 체크
 	RobotInfoData sendData;
 	for(int i = 0; i < 6; i++)
 		sendData.Angle[i] = angle[i];
-	sendData.Thumb.x = -40.0f;
+	sendData.Thumb.x = 40.0f;
 	sendData.Thumb.y = 0.0f;
 	sendData.Thumb.z = 70.0f;
-	sendData.upperLeft.x = 40.0f;
+	sendData.upperLeft.x = -40.0f;
 	sendData.upperLeft.y = 30.0f;
 	sendData.upperLeft.z = 70.0f;
-	sendData.upperRight.x = 40.0f;
+	sendData.upperRight.x = -40.0f;
 	sendData.upperRight.y = -30.0f;
 	sendData.upperRight.z = 70.0f;
+	fingerTransform(&sendData);
 	retVal = robotvisServer.SendAndCheck(sendData);
 #endif
 

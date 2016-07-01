@@ -6,3 +6,4 @@
 *.bin
 robotArmVis/Temp/
 robotArmVis/Library/ScriptAssemblies/BuiltinAssemblies.stamp
+*.bmp
