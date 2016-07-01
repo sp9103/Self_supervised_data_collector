@@ -5,7 +5,7 @@ InvalidMotionHandler::InvalidMotionHandler(void)
 {
 	DeinitCheck = true;
 
-	ROI3D.first = cv::Point3f(340.f, -225.f, -100.f);
+	ROI3D.first = cv::Point3f(310.f, -225.f, -100.f);
 	ROI3D.second = cv::Point3f(500.f, 127.f, 50.f);
 }
 
@@ -19,8 +19,16 @@ InvalidMotionHandler::~InvalidMotionHandler(void)
 //true == colision detected. false == safe
 bool InvalidMotionHandler::InvalidCheck(int *angle){
 	bool retVal = false;
-	const int FingerMaxLimit[3] = {400, 2050, 2950};
-	const int FingerMinLimit[3] = {-66, 1650, 2050};
+	const int FingerMaxLimit[3] = {400, 2160, 2440};
+	const int FingerMinLimit[3] = {-110, 1650, 1980};
+	const int JointMaxLimit[6] = {250950, 148000, 250950, 230000, 151875, 66880};
+	const int JointMinLimit[6] = {-250950,-148000, -250950, -56600, -151875, -62800};
+
+	for(int i = 0; i < NUM_JOINT; i++){
+		int angleOrigin = angle[i];
+		if(angleOrigin < JointMinLimit[i] || angleOrigin > JointMaxLimit[i])
+			return false;
+	}
 
 	for(int i = 0; i < 3; i++){
 		int angleOrigin = angle[NUM_JOINT + i];
@@ -188,7 +196,7 @@ armsdk::Pose3D InvalidMotionHandler::ForwardEnd(RobotArm *robotArm){
 
 	armsdk::Pose3D endeffector;
 	robotArm->Arm_Get_JointValue(&angi);
-	
+
 	vecd angd = kin.Value2Rad(angi);
 	kin.Forward(angd, &endeffector);
 

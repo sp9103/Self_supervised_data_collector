@@ -33,7 +33,7 @@ int main(){
 	cv::Rect RobotROI((KINECT_DEPTH_WIDTH - 160) / 2, (KINECT_DEPTH_HEIGHT- 160) / 2, 160, 160);
 	bool saveCheck = false;
 	int sampleAngleBox[9], count = 0;
-	const int sampleAngleLimit[9] = {1000, 1000, 1000, 1000, 500, 500, 20, 20, 20};
+	const int sampleAngleLimit[9] = {10000, 10000, 10000, 10000, 10000, 10000, 400, 400, 400};
 
 	//initialize
 	kinect.KinectInitialize();
@@ -67,7 +67,8 @@ int main(){
 			cv::Mat tempMapImg = KinectMappingImage.clone();
 			cv::rectangle(tempMapImg, RobotROI, cv::Scalar(0,255,0));
 			imshow("KinectMapFrame", tempMapImg);
-		}
+		}else
+			continue;
 
 		if(key == 27)
 			break;
@@ -80,9 +81,15 @@ int main(){
 			arm.GetPresPosition(getAngle);
 			while(1){
 				//angle sampling - limit 이내의 각도 샘플링
+				memcpy(tmpAngle, getAngle, sizeof(int) * 9);
 				for(int i = 0; i < NUM_XEL; i++){
-					sampleAngleBox[i] = rand() % sampleAngleLimit[i];
-					tmpAngle[i] = sampleAngleBox[i] + getAngle[i];
+					sampleAngleBox[i] = (rand() % sampleAngleLimit[i]) - sampleAngleLimit[i] / 2;
+					tmpAngle[i] += sampleAngleBox[i];
+				}
+
+				for(int i = 0; i < NUM_FINGER; i++){
+					int angleTemp = tmpAngle[i];
+					tmpAngle[i] = angleTemp < 0 ? (angleTemp + 4096) : angleTemp;
 				}
 				//motion check
 				if(motionHandler.InvalidCheck(tmpAngle))
@@ -95,10 +102,10 @@ int main(){
 			arm.GetGoalPosition(getAngle);
 
 			//write file
-			cv::Mat cropImage = KinectMappingImage(RobotROI);
-			writeData(getAngle, cropImage, count);
+			//cv::Mat cropImage = KinectMappingImage(RobotROI);
+			//writeData(getAngle, cropImage, count);
 			count++;
-			printf("[%d] data saveComplete.\n");
+			printf("[%d] data saveComplete.\n", count);
 		}
 	}
 
