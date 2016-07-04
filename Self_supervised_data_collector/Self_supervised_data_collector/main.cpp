@@ -7,6 +7,7 @@
 #include "KinectMangerThread.h"
 #include "Robot\RobotArm.h"
 #include "InvalidMotionHandler.h"
+#include "ColorBasedTracker.h"
 
 #ifdef _DEBUG
 #pragma comment(lib, "ARMSDKd.lib")
@@ -24,6 +25,7 @@ int main(){
 	KinectMangerThread kinectManager;
 	RobotArm arm;
 	InvalidMotionHandler motionHandler;
+	ColorBasedTracker tracker;
 
 	//variable
 	cv::Rect RobotROI((KINECT_DEPTH_WIDTH - 160) / 2, (KINECT_DEPTH_HEIGHT- 160) / 2, 160, 160);
@@ -78,6 +80,9 @@ int main(){
 
 		//write file
 		//cv::Mat cropImage = KinectMappingImage(RobotROI);
+		cv::Mat img = kinectManager.getImg();
+		cv::imshow("cropImg", img);
+		cv::waitKey(1);
 		//writeData(getAngle, cropImage, count);
 		count++;
 		printf("[%d] data saveComplete.\n", count);

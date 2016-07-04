@@ -33,7 +33,17 @@ cv::Mat KinectMangerThread::getImg(){
 	cv::Mat retMat;
 
 	EnterCriticalSection(&cs);
-	retMat = frame_.clone();
+	retMat = frame_;
+	LeaveCriticalSection(&cs);
+
+	return retMat;
+}
+
+cv::Mat KinectMangerThread::getDepth(){
+	cv::Mat retMat;
+
+	EnterCriticalSection(&cs);
+	retMat = depth_;
 	LeaveCriticalSection(&cs);
 
 	return retMat;
@@ -59,12 +69,14 @@ UINT WINAPI KinectMangerThread::KinectThread(LPVOID param){
 		kinect.GetRGBDnDepthnXYZ(&KinectMappingImage, &KinectDepthimage, &KinectXYZImage);
 		if(KinectMappingImage.cols != 0){
 			cv::Mat tempMapImg = KinectMappingImage.clone();
-			cv::rectangle(tempMapImg, p->imgROI, cv::Scalar(0,255,0));
-			imshow("KinectMapFrame", tempMapImg);
 
 			EnterCriticalSection(&p->cs);
 			p->frame_ = tempMapImg(p->imgROI).clone();
+			p->depth_ = KinectDepthimage(p->imgROI).clone();
 			LeaveCriticalSection(&p->cs);
+
+			cv::rectangle(tempMapImg, p->imgROI, cv::Scalar(0,255,0));
+			imshow("KinectMapFrame", tempMapImg);
 		}
 
 		if(p->loopClose || key == 27)

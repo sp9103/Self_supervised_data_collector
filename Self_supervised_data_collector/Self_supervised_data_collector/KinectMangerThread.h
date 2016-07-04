@@ -13,13 +13,14 @@ public:
 	void Initialize(cv::Rect srcROI);
 	void Deinitialize();
 	cv::Mat getImg();
+	cv::Mat getDepth();
 	bool isThreadDead();
 
 private:
 	bool endCheck;
 	bool loopClose;
 	CRITICAL_SECTION cs;
-	cv::Mat frame_;
+	cv::Mat frame_, depth_;
 	cv::Rect imgROI;
 
 	static UINT WINAPI KinectThread(LPVOID param); // 쓰레드 함수.
