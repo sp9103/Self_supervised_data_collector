@@ -55,6 +55,8 @@ public class SocketClient : MonoBehaviour {
 		gStyle = new GUIStyle();
 		gStyle.fontSize = 40;
 
+		frameLimit = Int32.Parse(stringToEdit);
+
 		//Scale Init
 		JointScale [0] = 9.0f;
 		JointScale [1] = 9.0f;

@@ -32,8 +32,7 @@ bool InvalidMotionHandler::InvalidCheck(int *angle){
 
 	for(int i = 0; i < 3; i++){
 		int angleOrigin = angle[NUM_JOINT + i];
-		int angleLim = angleOrigin > 3072 ? (angleOrigin - 4096) : angleOrigin;
-		if(angleLim < FingerMinLimit[i] || angleLim > FingerMaxLimit[i])
+		if(angleOrigin < FingerMinLimit[i] || angleOrigin > FingerMaxLimit[i])
 			return false;
 	}
 

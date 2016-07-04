@@ -220,7 +220,7 @@ int RobotArm::GetFingerLoad(int *load){
 		printf("present Load\n");
 		fingercontroller_.GetPresLoad();
 	}else{
-		jointcontroller_.GetPresCurrent();
+		//jointcontroller_.GetPresCurrent();
 		fingercontroller_.GetPresLoad(load);
 	}
 #endif

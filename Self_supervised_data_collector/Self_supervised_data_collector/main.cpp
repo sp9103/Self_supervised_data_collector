@@ -29,7 +29,7 @@ int main(){
 	cv::Rect RobotROI((KINECT_DEPTH_WIDTH - 160) / 2, (KINECT_DEPTH_HEIGHT- 160) / 2, 160, 160);
 	bool saveCheck = false;
 	int sampleAngleBox[9], count = 0;
-	const int sampleAngleLimit[9] = {10000, 10000, 10000, 10000, 10000, 10000, 400, 400, 400};
+	const int sampleAngleLimit[9] = {10000, 10000, 10000, 10000, 5000, 5000, 400, 400, 400};
 
 	//initialize
 	motionHandler.Initialize();
@@ -66,11 +66,6 @@ int main(){
 				sampleAngleBox[i] = (rand() % sampleAngleLimit[i]) - sampleAngleLimit[i] / 2;
 				tmpAngle[i] += sampleAngleBox[i];
 			}
-
-			for(int i = 0; i < NUM_FINGER; i++){
-				int angleTemp = tmpAngle[i];
-				tmpAngle[i] = angleTemp < 0 ? (angleTemp + 4096) : angleTemp;
-			}
 			//motion check
 			if(motionHandler.InvalidCheck(tmpAngle))
 				break;
@@ -79,7 +74,7 @@ int main(){
 		//실제 움직임
 		arm.SetGoalPosition(tmpAngle);
 		WaitUntilMoveEnd(&arm);
-		arm.GetGoalPosition(getAngle);
+		arm.GetPresPosition(getAngle);
 
 		//write file
 		//cv::Mat cropImage = KinectMappingImage(RobotROI);
@@ -93,6 +88,9 @@ int main(){
 	motionHandler.Deinitialize();
 	kinectManager.Deinitialize();
 
+	int Initpos[] = {0, 0, 0, 0, 0, 0, 2622, 1534, 3531};
+	arm.SetGoalPosition(Initpos);
+	WaitUntilMoveEnd(&arm);
 	arm.TorqueOff();
 
 	return 0;
