@@ -16,9 +16,12 @@
 #pragma comment(lib, "ARMSDK.lib") 
 #endif
 
+#define DEFAULT_PATH "data"
+
 void writeData(int *angle, cv::Mat img, const int count);
 int WaitUntilMoveEnd(RobotArm *robot);
 void ControllerInit(RobotArm *robot);
+void CreateRGBDdir(const char* className);
 
 int main(){
 	//class 
@@ -32,12 +35,14 @@ int main(){
 	bool saveCheck = false;
 	int sampleAngleBox[9], count = 0;
 	const int sampleAngleLimit[9] = {10000, 10000, 10000, 10000, 5000, 5000, 400, 400, 400};
+	char dirName[256];
 
 	//initialize
 	motionHandler.Initialize();
 	kinectManager.Initialize(RobotROI);
 
-	srand(time(NULL));
+	int presentSecond = time(NULL);
+	srand(presentSecond);
 
 #ifdef RIGHT_ARM_USE
 	dxl_write_dword(arm.DXL_Get_Port(), 7, NX::P_HOMING_OFFSET_LL,  62750, 0);
@@ -55,6 +60,10 @@ int main(){
 	//arm.TorqueOff();
 	printf("If u want to start program, press any key.\n");
 	getch();
+
+	//디렉토리 생성
+	itoa(presentSecond, dirName, 10);
+	CreateRGBDdir(dirName);
 
 	while(!kinectManager.isThreadDead()){
 
@@ -152,4 +161,27 @@ void ControllerInit(RobotArm *robot){
 
 	robot->SetGoalVelocity(vel);
 
+}
+
+void CreateRGBDdir(const char* className){
+	TCHAR szDir[MAX_PATH] = {0,};
+	TCHAR RGBDDir[MAX_PATH] = {0,};
+	TCHAR DepthDir[MAX_PATH] = {0,};
+	TCHAR xyzDir[MAX_PATH] = {0,};
+	char dirpath[256];
+	sprintf(dirpath, "%s\\%s", DEFAULT_PATH, className);
+	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, dirpath, strlen(dirpath), szDir, MAX_PATH);
+	bool mkdir_check = CreateDirectory(szDir, NULL);									//루트 디렉토리
+	sprintf(dirpath, "%s\\%s\\RGB", DEFAULT_PATH, className);
+	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, dirpath, strlen(dirpath), RGBDDir, MAX_PATH);
+	mkdir_check = CreateDirectory(RGBDDir, NULL);											//컬러 디렉토리
+	sprintf(dirpath, "%s\\%s\\DEPTHMAP", DEFAULT_PATH, className);
+	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, dirpath, strlen(dirpath), DepthDir, MAX_PATH);
+	mkdir_check = CreateDirectory(DepthDir, NULL);											//뎁스 디렉토리
+	sprintf(dirpath, "%s\\%s\\XYZMAP", DEFAULT_PATH, className);
+	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, dirpath, strlen(dirpath), xyzDir, MAX_PATH);
+	mkdir_check = CreateDirectory(xyzDir, NULL);
+	sprintf(dirpath, "%s\\%s\\ANGLE", DEFAULT_PATH, className);
+	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, dirpath, strlen(dirpath), xyzDir, MAX_PATH);
+	mkdir_check = CreateDirectory(xyzDir, NULL);
 }
