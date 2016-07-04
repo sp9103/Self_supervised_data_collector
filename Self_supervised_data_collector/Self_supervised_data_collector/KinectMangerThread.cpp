@@ -24,7 +24,7 @@ void KinectMangerThread::Initialize(cv::Rect srcROI){
 void KinectMangerThread::Deinitialize(){
 	loopClose = true;
 
-	while(endCheck)	Sleep(10);
+	while(!endCheck)	Sleep(10);
 
 	DeleteCriticalSection(&cs);
 }
@@ -75,6 +75,7 @@ UINT WINAPI KinectMangerThread::KinectThread(LPVOID param){
 	p->loopClose = true;
 
 	kinect.KinectDestroy();
+	cv::destroyAllWindows();
 
 	printf("Kinect Thread safely terminated.\n");
 
