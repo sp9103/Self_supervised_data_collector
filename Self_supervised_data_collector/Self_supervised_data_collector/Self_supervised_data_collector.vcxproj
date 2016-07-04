@@ -84,6 +84,7 @@
     <ClCompile Include="ColorBasedTracker.cpp" />
     <ClCompile Include="InvalidMotionHandler.cpp" />
     <ClCompile Include="KinectConnecter.cpp" />
+    <ClCompile Include="KinectMangerThread.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="RobotVisServer.cpp" />
     <ClCompile Include="Robot\DynamixelPro.cpp" />
@@ -95,6 +96,7 @@
     <ClInclude Include="ColorBasedTracker.h" />
     <ClInclude Include="InvalidMotionHandler.h" />
     <ClInclude Include="KinectConnecter.h" />
+    <ClInclude Include="KinectMangerThread.h" />
     <ClInclude Include="RobotVisServer.h" />
     <ClInclude Include="Robot\dynamixel.h" />
     <ClInclude Include="Robot\DynamixelPro.h" />

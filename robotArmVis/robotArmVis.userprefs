@@ -1,8 +1,8 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace />
-  <MonoDevelop.Ide.Workbench ActiveDocument="..\..\PointCloudViewr\PointCloudViewr\Assets\PointCloud\Scripts\PointCloudSquare.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\SocketClient.cs">
     <Files>
-      <File FileName="..\..\PointCloudViewr\PointCloudViewr\Assets\PointCloud\Scripts\PointCloudSquare.cs" Line="55" Column="54" />
+      <File FileName="Assets\SocketClient.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

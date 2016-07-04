@@ -48,6 +48,9 @@
     <ClCompile Include="BlobLabeling.cpp">
       <Filter>ColorBasedTracker</Filter>
     </ClCompile>
+    <ClCompile Include="KinectMangerThread.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="KinectConnecter.h">
@@ -79,6 +82,9 @@
     </ClInclude>
     <ClInclude Include="BlobLabeling.h">
       <Filter>ColorBasedTracker</Filter>
+    </ClInclude>
+    <ClInclude Include="KinectMangerThread.h">
+      <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
