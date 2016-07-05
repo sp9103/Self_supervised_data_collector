@@ -22,6 +22,7 @@ void writeData(int *angle, cv::Mat img, const int count);
 int WaitUntilMoveEnd(RobotArm *robot);
 void ControllerInit(RobotArm *robot);
 void CreateRGBDdir(const char* className);
+void writeDepthData(cv::Mat src, char* path, char* name);
 
 int main(){
 	//class 
@@ -65,6 +66,19 @@ int main(){
 	itoa(presentSecond, dirName, 10);
 	CreateRGBDdir(dirName);
 
+	//배경취득
+	cv::Mat backRGB = kinectManager.getImg();
+	cv::Mat backDepth = kinectManager.getDepth();
+	cv::imshow("background", backRGB);
+	cv::waitKey(1);
+	char buf[256];
+	strcpy(buf, DEFAULT_PATH);
+	strcat(buf, dirName);
+	sprintf(buf, "%s\\%s", DEFAULT_PATH, dirName);
+	writeDepthData(backDepth, buf, "backDepth");
+	strcat(buf, "\\backRGB.bmp");
+	cv::imwrite(buf, backRGB);
+
 	while(!kinectManager.isThreadDead()){
 
 		//샘플링된 모션이 가능한 모션인지를 체크
@@ -88,8 +102,8 @@ int main(){
 		arm.GetPresPosition(getAngle);
 
 		//write file
-		//cv::Mat cropImage = KinectMappingImage(RobotROI);
 		cv::Mat img = kinectManager.getImg();
+		cv::Mat depth = kinectManager.getDepth();
 		cv::imshow("cropImg", img);
 		cv::waitKey(1);
 		//writeData(getAngle, cropImage, count);
@@ -174,14 +188,30 @@ void CreateRGBDdir(const char* className){
 	bool mkdir_check = CreateDirectory(szDir, NULL);									//루트 디렉토리
 	sprintf(dirpath, "%s\\%s\\RGB", DEFAULT_PATH, className);
 	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, dirpath, strlen(dirpath), RGBDDir, MAX_PATH);
-	mkdir_check = CreateDirectory(RGBDDir, NULL);											//컬러 디렉토리
+	mkdir_check = CreateDirectory(RGBDDir, NULL);											//컬러 디렉토리 - 원본
 	sprintf(dirpath, "%s\\%s\\DEPTHMAP", DEFAULT_PATH, className);
 	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, dirpath, strlen(dirpath), DepthDir, MAX_PATH);
-	mkdir_check = CreateDirectory(DepthDir, NULL);											//뎁스 디렉토리
+	mkdir_check = CreateDirectory(DepthDir, NULL);											//뎁스 디렉토리 - 원본
 	sprintf(dirpath, "%s\\%s\\XYZMAP", DEFAULT_PATH, className);
 	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, dirpath, strlen(dirpath), xyzDir, MAX_PATH);
-	mkdir_check = CreateDirectory(xyzDir, NULL);
+	mkdir_check = CreateDirectory(xyzDir, NULL);											//포인트 클라우드 디렉토리 - 원본
 	sprintf(dirpath, "%s\\%s\\ANGLE", DEFAULT_PATH, className);
 	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, dirpath, strlen(dirpath), xyzDir, MAX_PATH);
-	mkdir_check = CreateDirectory(xyzDir, NULL);
+	mkdir_check = CreateDirectory(xyzDir, NULL);											//Angle
+	sprintf(dirpath, "%s\\%s\\BACKGROUND", DEFAULT_PATH, className);
+	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, dirpath, strlen(dirpath), xyzDir, MAX_PATH);
+	mkdir_check = CreateDirectory(xyzDir, NULL);	
+}
+
+void writeDepthData(cv::Mat src, char* path, char* name){
+	//Depth Infomation write
+	char buf[256];
+	sprintf(buf, "%s\\%s.bin", path, name);
+	FILE *fp = fopen(buf, "wb");
+	fwrite(&src.rows, sizeof(int), 1, fp);
+	fwrite(&src.cols, sizeof(int), 1, fp);
+	int Type = src.type();
+	fwrite(&Type, sizeof(int), 1, fp);
+	for(int i = 0; i < src.rows * src.cols; i++)		fwrite(&src.at<float>(i), sizeof(float), 1, fp);
+	fclose(fp);
 }
