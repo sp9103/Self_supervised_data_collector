@@ -49,6 +49,16 @@ cv::Mat KinectMangerThread::getDepth(){
 	return retMat;
 }
 
+cv::Mat KinectMangerThread::getPointCloud(){
+	cv::Mat retMat;
+
+	EnterCriticalSection(&cs);
+	retMat = pointCloud_;
+	LeaveCriticalSection(&cs);
+
+	return retMat;
+}
+
 UINT WINAPI KinectMangerThread::KinectThread(LPVOID param){
 	KinectMangerThread* p = (KinectMangerThread*)param;
 
@@ -73,6 +83,7 @@ UINT WINAPI KinectMangerThread::KinectThread(LPVOID param){
 			EnterCriticalSection(&p->cs);
 			p->frame_ = tempMapImg(p->imgROI).clone();
 			p->depth_ = KinectDepthimage(p->imgROI).clone();
+			p->pointCloud_ = KinectXYZImage(p->imgROI).clone();
 			LeaveCriticalSection(&p->cs);
 
 			cv::rectangle(tempMapImg, p->imgROI, cv::Scalar(0,255,0));

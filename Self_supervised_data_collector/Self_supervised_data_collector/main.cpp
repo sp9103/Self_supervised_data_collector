@@ -18,7 +18,7 @@
 
 #define DEFAULT_PATH "data"
 
-void writeData(int *angle, cv::Mat img, const int count);
+void writeData(cv::Mat RGBimg, cv::Mat DEPTHimg, cv::Mat pointCloud, ColorBasedTracker *cbTracker, int* angle, char* path, const int count);
 int WaitUntilMoveEnd(RobotArm *robot);
 void ControllerInit(RobotArm *robot);
 void CreateRGBDdir(const char* className);
@@ -78,6 +78,7 @@ int main(){
 	writeDepthData(backDepth, buf, "backDepth");
 	strcat(buf, "\\backRGB.bmp");
 	cv::imwrite(buf, backRGB);
+	tracker.InsertBackGround(backRGB, backDepth);
 
 	while(!kinectManager.isThreadDead()){
 
@@ -104,9 +105,10 @@ int main(){
 		//write file
 		cv::Mat img = kinectManager.getImg();
 		cv::Mat depth = kinectManager.getDepth();
+		cv::Mat pointCloud = kinectManager.getPointCloud();
 		cv::imshow("cropImg", img);
 		cv::waitKey(1);
-		//writeData(getAngle, cropImage, count);
+		writeData(img, depth, pointCloud, &tracker, getAngle, dirName, count);
 		count++;
 		printf("[%d] data saveComplete.\n", count);
 	}
@@ -122,18 +124,6 @@ int main(){
 	arm.TorqueOff();
 
 	return 0;
-}
-
-void writeData(int *angle, cv::Mat img, const int count){
-	char imgpath[256], anglepath[256];
-	sprintf(imgpath, "%s\\%d.bmp", IMG_PATH, count);
-	sprintf(anglepath, "%s\\%d.txt", ANGLE_PATH, count);
-	cv::imwrite(imgpath, img);
-
-	FILE *fp = fopen(anglepath, "w");
-	fprintf(fp, "%d\t", count);
-	for(int i = 0; i < NUM_XEL; i++)	fprintf(fp, "%d ", angle[i]);
-	fclose(fp);
 }
 
 int isAllZero(int src[]){
@@ -201,6 +191,10 @@ void CreateRGBDdir(const char* className){
 	sprintf(dirpath, "%s\\%s\\BACKGROUND", DEFAULT_PATH, className);
 	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, dirpath, strlen(dirpath), xyzDir, MAX_PATH);
 	mkdir_check = CreateDirectory(xyzDir, NULL);	
+}
+
+void writeData(cv::Mat RGBimg, cv::Mat DEPTHimg, cv::Mat pointCloud, ColorBasedTracker *cbTracker, int* angle, char* path, const int count){
+
 }
 
 void writeDepthData(cv::Mat src, char* path, char* name){
