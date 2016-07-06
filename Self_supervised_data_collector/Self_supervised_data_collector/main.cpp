@@ -190,6 +190,9 @@ void CreateRGBDdir(const char* className){
 	mkdir_check = CreateDirectory(xyzDir, NULL);											//Angle
 	sprintf(dirpath, "%s\\%s\\BACKGROUND", DEFAULT_PATH, className);
 	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, dirpath, strlen(dirpath), xyzDir, MAX_PATH);
+	mkdir_check = CreateDirectory(xyzDir, NULL);
+	sprintf(dirpath, "%s\\%s\\PROCESSIMG", DEFAULT_PATH, className);
+	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, dirpath, strlen(dirpath), xyzDir, MAX_PATH);
 	mkdir_check = CreateDirectory(xyzDir, NULL);	
 }
 
@@ -210,6 +213,12 @@ void writeData(cv::Mat RGBimg, cv::Mat DEPTHimg, cv::Mat pointCloud, ColorBasedT
 	FILE *fp = fopen(buf, "w");
 	for(int i = 0; i < NUM_XEL; i++)	fprintf(fp, "%d\n", angle[i]);
 	fclose(fp);
+	//store Process Img
+	sprintf(buf, "%s\\PROCESSIMG\\%d.bmp", pathBuf, count);
+	cv::imwrite(buf, processImg);
+	cv::imshow("Process Img", processImg);
+	cv::waitKey(1);
+	//store point cloud
 }
 
 void writeDepthData(cv::Mat src, char* path, char* name){
