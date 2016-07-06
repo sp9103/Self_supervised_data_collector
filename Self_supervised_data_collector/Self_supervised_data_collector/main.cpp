@@ -219,6 +219,16 @@ void writeData(cv::Mat RGBimg, cv::Mat DEPTHimg, cv::Mat pointCloud, ColorBasedT
 	cv::imshow("Process Img", processImg);
 	cv::waitKey(1);
 	//store point cloud
+	sprintf(buf, "%s\\XYZMAP\\%d.bin", pathBuf, count);
+	fp = fopen(buf, "wb");
+	fwrite(&pointCloud.rows, sizeof(int), 1, fp);
+	fwrite(&pointCloud.cols, sizeof(int), 1, fp);
+	int Type = pointCloud.type();
+	fwrite(&Type, sizeof(int), 1, fp);
+	for(int i = 0; i < pointCloud.rows * pointCloud.cols; i++)
+		for(int c = 0; c < pointCloud.channels(); c++)
+			fwrite(&pointCloud.at<Vec3f>(i)[c], sizeof(float), 1, fp);
+	fclose(fp);
 }
 
 void writeDepthData(cv::Mat src, char* path, char* name){
