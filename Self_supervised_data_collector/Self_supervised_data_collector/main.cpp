@@ -194,7 +194,22 @@ void CreateRGBDdir(const char* className){
 }
 
 void writeData(cv::Mat RGBimg, cv::Mat DEPTHimg, cv::Mat pointCloud, ColorBasedTracker *cbTracker, int* angle, char* path, const int count){
+	cv::Mat processImg = cbTracker->calcImage(RGBimg, DEPTHimg);
+	char pathBuf[256], buf[256], id[256];
+	sprintf(pathBuf, "%s\\%s", DEFAULT_PATH, path);
+	itoa(count, id, 10);
 
+	//store RGB
+	sprintf(buf, "%s\\RGB\\%d.bmp", pathBuf, count);
+	cv::imwrite(buf, RGBimg);
+	//store Depth
+	sprintf(buf, "%s\\DEPTHMAP", pathBuf);
+	writeDepthData(DEPTHimg, buf, id);
+	//store Angle
+	sprintf(buf, "%s\\ANGLE\\%d.txt", pathBuf, count);
+	FILE *fp = fopen(buf, "w");
+	for(int i = 0; i < NUM_XEL; i++)	fprintf(fp, "%d\n", angle[i]);
+	fclose(fp);
 }
 
 void writeDepthData(cv::Mat src, char* path, char* name){
