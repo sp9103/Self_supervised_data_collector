@@ -5,8 +5,8 @@ InvalidMotionHandler::InvalidMotionHandler(void)
 {
 	DeinitCheck = true;
 
-	ROI3D.first = cv::Point3f(310.f, -225.f, -100.f);
-	ROI3D.second = cv::Point3f(500.f, 127.f, 50.f);
+	ROI3D.first = cv::Point3f(259.f, -300.f, -100.f);
+	ROI3D.second = cv::Point3f(500.f, 55.f, 50.f);
 }
 
 
@@ -19,8 +19,8 @@ InvalidMotionHandler::~InvalidMotionHandler(void)
 //true == colision detected. false == safe
 bool InvalidMotionHandler::InvalidCheck(int *angle){
 	bool retVal = false;
-	const int FingerMaxLimit[3] = {2940, 1600, 3650};
-	const int FingerMinLimit[3] = {2480, 1150, 3160};
+	const int FingerMaxLimit[3] = {2940, 1600, 2100};
+	const int FingerMinLimit[3] = {2480, 1150, 1800};
 	const int JointMaxLimit[6] = {250950, 148000, 250950, 230000, 151875, 66880};
 	const int JointMinLimit[6] = {-250950,-148000, -250950, -56600, -151875, -62800};
 

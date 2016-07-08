@@ -32,7 +32,7 @@ int main(){
 	ColorBasedTracker tracker;
 
 	//variable
-	cv::Rect RobotROI((KINECT_DEPTH_WIDTH - 160) / 2, (KINECT_DEPTH_HEIGHT- 160) / 2, 160, 160);
+	cv::Rect RobotROI((KINECT_DEPTH_WIDTH - 160) / 2 + 40, (KINECT_DEPTH_HEIGHT- 160) / 2, 160, 160);
 	bool saveCheck = false;
 	int sampleAngleBox[9], count = 0;
 	const int sampleAngleLimit[9] = {10000, 10000, 10000, 10000, 5000, 5000, 400, 400, 400};
@@ -84,6 +84,9 @@ int main(){
 
 		//샘플링된 모션이 가능한 모션인지를 체크
 		int getAngle[9], tmpAngle[9];
+		
+		//motionHandler.ForwardEnd(&arm);
+
 		arm.GetPresPosition(getAngle);
 		while(1){
 			//angle sampling - limit 이내의 각도 샘플링
@@ -173,25 +176,25 @@ void CreateRGBDdir(const char* className){
 	TCHAR DepthDir[MAX_PATH] = {0,};
 	TCHAR xyzDir[MAX_PATH] = {0,};
 	char dirpath[256];
-	sprintf(dirpath, "%s\\%s", DEFAULT_PATH, className);
+	sprintf(dirpath, "%s\\%s\0", DEFAULT_PATH, className);
 	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, dirpath, strlen(dirpath), szDir, MAX_PATH);
 	bool mkdir_check = CreateDirectory(szDir, NULL);									//루트 디렉토리
-	sprintf(dirpath, "%s\\%s\\RGB", DEFAULT_PATH, className);
+	sprintf(dirpath, "%s\\%s\\RGB\0", DEFAULT_PATH, className);
 	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, dirpath, strlen(dirpath), RGBDDir, MAX_PATH);
 	mkdir_check = CreateDirectory(RGBDDir, NULL);											//컬러 디렉토리 - 원본
-	sprintf(dirpath, "%s\\%s\\DEPTHMAP", DEFAULT_PATH, className);
-	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, dirpath, strlen(dirpath), DepthDir, MAX_PATH);
-	mkdir_check = CreateDirectory(DepthDir, NULL);											//뎁스 디렉토리 - 원본
-	sprintf(dirpath, "%s\\%s\\XYZMAP", DEFAULT_PATH, className);
-	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, dirpath, strlen(dirpath), xyzDir, MAX_PATH);
-	mkdir_check = CreateDirectory(xyzDir, NULL);											//포인트 클라우드 디렉토리 - 원본
-	sprintf(dirpath, "%s\\%s\\ANGLE", DEFAULT_PATH, className);
+	sprintf(dirpath, "%s\\%s\\ANGLE\0", DEFAULT_PATH, className);
 	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, dirpath, strlen(dirpath), xyzDir, MAX_PATH);
 	mkdir_check = CreateDirectory(xyzDir, NULL);											//Angle
-	sprintf(dirpath, "%s\\%s\\BACKGROUND", DEFAULT_PATH, className);
+	sprintf(dirpath, "%s\\%s\\DEPTHMAP\0", DEFAULT_PATH, className);
+	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, dirpath, strlen(dirpath), DepthDir, MAX_PATH);
+	mkdir_check = CreateDirectory(DepthDir, NULL);											//뎁스 디렉토리 - 원본
+	sprintf(dirpath, "%s\\%s\\XYZMAP\0", DEFAULT_PATH, className);
+	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, dirpath, strlen(dirpath), xyzDir, MAX_PATH);
+	mkdir_check = CreateDirectory(xyzDir, NULL);											//포인트 클라우드 디렉토리 - 원본
+	sprintf(dirpath, "%s\\%s\\BACKGROUND\0", DEFAULT_PATH, className);
 	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, dirpath, strlen(dirpath), xyzDir, MAX_PATH);
 	mkdir_check = CreateDirectory(xyzDir, NULL);
-	sprintf(dirpath, "%s\\%s\\PROCESSIMG", DEFAULT_PATH, className);
+	sprintf(dirpath, "%s\\%s\\PROCESSIMG\0", DEFAULT_PATH, className);
 	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, dirpath, strlen(dirpath), xyzDir, MAX_PATH);
 	mkdir_check = CreateDirectory(xyzDir, NULL);	
 }
@@ -211,7 +214,7 @@ void writeData(cv::Mat RGBimg, cv::Mat DEPTHimg, cv::Mat pointCloud, ColorBasedT
 	//store Angle
 	sprintf(buf, "%s\\ANGLE\\%d.txt", pathBuf, count);
 	FILE *fp = fopen(buf, "w");
-	for(int i = 0; i < NUM_XEL; i++)	fprintf(fp, "%d\n", angle[i]);
+	for(int i = 0; i < NUM_XEL; i++)	/*fprintf(fp, "%d\n", angle[i]);*/ printf("%d\n", angle[i]);
 	fclose(fp);
 	//store Process Img
 	sprintf(buf, "%s\\PROCESSIMG\\%d.bmp", pathBuf, count);

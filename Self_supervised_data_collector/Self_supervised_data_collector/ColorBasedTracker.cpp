@@ -16,7 +16,8 @@ void ColorBasedTracker::InsertBackGround(cv::Mat Color, cv::Mat Depth){
 	imgWidth = Color.cols;
 	imgHeight = Color.rows;
 
-	ColorBackGround = Color.clone();
+	if(Color.channels() == 3)		ColorBackGround = Color.clone();
+	else						cv::cvtColor(Color, ColorBackGround, CV_BGRA2BGR);
 	DepthBackGround = Depth.clone();
 }
 
@@ -61,6 +62,8 @@ cv::Mat ColorBasedTracker::subBackground(cv::Mat srcColor, cv::Mat srcDepth){
 }
 
 cv::Mat ColorBasedTracker::calcImage(cv::Mat src, cv::Mat depth){
+	if(src.channels() == 4)	cv::cvtColor(src, src, CV_BGRA2BGR);
+
 	double duration;                                                         //변수 설정
 	duration = static_cast<double>(cv::getTickCount());       //초기 시작 시간 설정
 	cv::Mat output(src.rows, src.cols, src.type());
@@ -93,14 +96,14 @@ cv::Mat ColorBasedTracker::calcImage(cv::Mat src, cv::Mat depth){
 	duration /= cv::getTickFrequency();									//ms 단위 경과 시간
 	printf("%f ms\n",duration);
 
-	cv::imshow("backSub", backSub);
-	cv::imshow("YellowMap", YellowMap);
-	cv::imshow("MapSub", MapSub);
-	cv::imshow("src", src);
-	cv::imshow("back_compoes", src_compose);
-	cv::waitKey(10);
+	//cv::imshow("backSub", backSub);
+	//cv::imshow("YellowMap", YellowMap);
+	//cv::imshow("MapSub", MapSub);
+	//cv::imshow("src", src);
+	//cv::imshow("back_compoes", src_compose);
+	//cv::waitKey(10);
 
-	backSub.release();
+	//backSub.release();
 
 	return output;
 }
