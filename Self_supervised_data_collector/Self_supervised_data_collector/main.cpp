@@ -18,7 +18,7 @@
 
 #define DEFAULT_PATH "data"
 
-void writeData(cv::Mat RGBimg, cv::Mat DEPTHimg, cv::Mat pointCloud, ColorBasedTracker *cbTracker, int* angle, char* path, const int count);
+bool writeData(cv::Mat RGBimg, cv::Mat DEPTHimg, cv::Mat pointCloud, ColorBasedTracker *cbTracker, int* angle, char* path, const int count);
 int WaitUntilMoveEnd(RobotArm *robot);
 void ControllerInit(RobotArm *robot);
 void CreateRGBDdir(const char* className);
@@ -35,7 +35,7 @@ int main(){
 	cv::Rect RobotROI((KINECT_DEPTH_WIDTH - 160) / 2 + 40, (KINECT_DEPTH_HEIGHT- 160) / 2, 160, 160);
 	bool saveCheck = false;
 	int sampleAngleBox[9], count = 0;
-	const int sampleAngleLimit[9] = {10000, 10000, 10000, 10000, 5000, 5000, 400, 400, 400};
+	const int sampleAngleLimit[9] = {10000, 10000, 10000, 10000, 10000, 10000, 400, 400, 400};
 	char dirName[256];
 
 	//initialize
@@ -61,7 +61,7 @@ int main(){
 	arm.TorqueOff();
 	printf("If u want to start program, press any key.\n");
 	getch();
-	
+
 
 	//디렉토리 생성
 	itoa(presentSecond, dirName, 10);
@@ -89,7 +89,7 @@ int main(){
 
 		//샘플링된 모션이 가능한 모션인지를 체크
 		int getAngle[9], tmpAngle[9];
-		
+
 		//motionHandler.ForwardEnd(&arm);
 
 		printf("Sampling start....");
@@ -123,9 +123,10 @@ int main(){
 		cv::Mat pointCloud = kinectManager.getPointCloud();
 		cv::imshow("cropImg", img);
 		cv::waitKey(1);
-		writeData(img, depth, pointCloud, &tracker, getAngle, dirName, count);
-		count++;
-		printf("[%d] data saveComplete.\n", count);
+		if(writeData(img, depth, pointCloud, &tracker, getAngle, dirName, count)){
+			count++;
+			printf("[%d] data saveComplete.\n", count);
+		}
 	}
 
 	//Deallocation
@@ -213,9 +214,9 @@ void CreateRGBDdir(const char* className){
 	mkdir_check = CreateDirectory(xyzDir, NULL);	
 }
 
-void writeData(cv::Mat RGBimg, cv::Mat DEPTHimg, cv::Mat pointCloud, ColorBasedTracker *cbTracker, int* angle, char* path, const int count){
+bool writeData(cv::Mat RGBimg, cv::Mat DEPTHimg, cv::Mat pointCloud, ColorBasedTracker *cbTracker, int* angle, char* path, const int count){
 	cv::Mat processImg = cbTracker->calcImage(RGBimg, DEPTHimg);
-	if(processImg.rows == 0)	return;
+	if(processImg.rows == 0)	return false;
 
 	char pathBuf[256], buf[256], id[256];
 	sprintf(pathBuf, "%s\\%s", DEFAULT_PATH, path);
@@ -248,6 +249,8 @@ void writeData(cv::Mat RGBimg, cv::Mat DEPTHimg, cv::Mat pointCloud, ColorBasedT
 		for(int c = 0; c < pointCloud.channels(); c++)
 			fwrite(&pointCloud.at<Vec3f>(i)[c], sizeof(float), 1, fp);
 	fclose(fp);
+
+	return true;
 }
 
 void writeDepthData(cv::Mat src, char* path, char* name){

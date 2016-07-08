@@ -106,16 +106,17 @@ cv::Mat ColorBasedTracker::calcImage(cv::Mat src, cv::Mat depth){
 	//backSub.release();
 
 	//이미지 생성부
-	const int extra = 2;
+	const int extra = 4;
 	HandBox.x -= extra;
 	HandBox.y -= extra;
 	HandBox.width += extra;
 	HandBox.height += extra;
-	if(HandBox.x <= 0 || HandBox.y <= 0)	output.create(0, 0, CV_8UC1);
+	int x_prime = HandBox.x + HandBox.width;
+	int y_prime = HandBox.y + HandBox.height;
+
+	if(HandBox.x <= 0 || HandBox.y <= 0 || src.cols <= x_prime || src.rows <= y_prime)	output.create(0, 0, CV_8UC1);
 	else{
 		output.create(src.rows, src.cols, src.type());
-		int x_prime = HandBox.x + HandBox.width;
-		int y_prime = HandBox.y + HandBox.height;
 		for(int h = 0; h < src.rows; h++)
 			for(int w = 0; w < src.cols; w++){
 				if(HandBox.x <= w && w <= x_prime && HandBox.y <= h && h <= y_prime)
