@@ -80,6 +80,9 @@ int main(){
 	cv::imwrite(buf, backRGB);
 	tracker.InsertBackGround(backRGB, backDepth);
 
+	printf("\nIf u save background, press any key\n");
+	getch();
+
 	while(!kinectManager.isThreadDead()){
 
 		//샘플링된 모션이 가능한 모션인지를 체크
@@ -214,7 +217,7 @@ void writeData(cv::Mat RGBimg, cv::Mat DEPTHimg, cv::Mat pointCloud, ColorBasedT
 	//store Angle
 	sprintf(buf, "%s\\ANGLE\\%d.txt", pathBuf, count);
 	FILE *fp = fopen(buf, "w");
-	for(int i = 0; i < NUM_XEL; i++)	/*fprintf(fp, "%d\n", angle[i]);*/ printf("%d\n", angle[i]);
+	for(int i = 0; i < NUM_XEL; i++)	fprintf(fp, "%d\n", angle[i]);
 	fclose(fp);
 	//store Process Img
 	sprintf(buf, "%s\\PROCESSIMG\\%d.bmp", pathBuf, count);
