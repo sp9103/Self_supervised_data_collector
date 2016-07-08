@@ -58,10 +58,10 @@ int main(){
 		return -1;
 	}
 
-	//arm.TorqueOff();
+	arm.TorqueOff();
 	printf("If u want to start program, press any key.\n");
 	getch();
-	arm.TorqueOff();
+	
 
 	//디렉토리 생성
 	itoa(presentSecond, dirName, 10);
@@ -92,6 +92,7 @@ int main(){
 		
 		//motionHandler.ForwardEnd(&arm);
 
+		printf("Sampling start....");
 		arm.GetPresPosition(getAngle);
 		while(1){
 			//angle sampling - limit 이내의 각도 샘플링
@@ -104,11 +105,14 @@ int main(){
 			if(motionHandler.InvalidCheck(tmpAngle))
 				break;
 		}
+		printf("complete!\n");
 
 		//실제 움직임
+		printf("Move Robot.....");
 		arm.SetGoalPosition(tmpAngle);
 		WaitUntilMoveEnd(&arm);
 		arm.GetPresPosition(getAngle);
+		printf("complete!\n");
 
 		//write file
 		cv::Mat img = kinectManager.getImg();
@@ -126,9 +130,11 @@ int main(){
 	motionHandler.Deinitialize();
 	kinectManager.Deinitialize();
 
+	printf("Go End position.....");
 	int Initpos[] = {0, 0, 0, 0, 0, 0, 2622, 1534, 2100};
 	arm.SetGoalPosition(Initpos);
 	WaitUntilMoveEnd(&arm);
+	printf("complete!\n");
 	arm.TorqueOff();
 
 	return 0;
