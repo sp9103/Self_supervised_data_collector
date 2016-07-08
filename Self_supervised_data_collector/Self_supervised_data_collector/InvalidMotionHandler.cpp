@@ -53,15 +53,15 @@ bool InvalidMotionHandler::InvalidCheck(int *angle){
 	RobotInfoData sendData;
 	for(int i = 0; i < 6; i++)
 		sendData.Angle[i] = angle[i];
-	sendData.Thumb.x = 40.0f;
+	sendData.Thumb.x = 70.0f;
 	sendData.Thumb.y = 0.0f;
-	sendData.Thumb.z = 70.0f;
+	sendData.Thumb.z = 120.0f;
 	sendData.upperLeft.x = -40.0f;
 	sendData.upperLeft.y = 30.0f;
-	sendData.upperLeft.z = 70.0f;
+	sendData.upperLeft.z = 150.0f;
 	sendData.upperRight.x = -40.0f;
 	sendData.upperRight.y = -30.0f;
-	sendData.upperRight.z = 70.0f;
+	sendData.upperRight.z = 150.0f;
 	fingerTransform(&sendData);
 	retVal = robotvisServer.SendAndCheck(sendData);
 #endif

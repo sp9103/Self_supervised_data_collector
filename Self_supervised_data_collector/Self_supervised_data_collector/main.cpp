@@ -106,6 +106,9 @@ int main(){
 				break;
 		}
 		printf("complete!\n");
+		printf("sampling result : \n");
+		for(int i = 0; i < NUM_XEL; i++)	printf("%d ", sampleAngleBox[i]);
+		printf("\n");
 
 		//실제 움직임
 		printf("Move Robot.....");
@@ -157,7 +160,7 @@ int WaitUntilMoveEnd(RobotArm *robot){
 	while(1){
 		_sleep(33);
 		robot->GetPresVelocity(presVel);
-		robot->GetFingerLoad(fingerLoad);
+		//robot->GetFingerLoad(fingerLoad);
 
 		if(isAllZero(presVel) == 1)
 			return 1;
