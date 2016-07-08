@@ -66,7 +66,7 @@ cv::Mat ColorBasedTracker::calcImage(cv::Mat src, cv::Mat depth){
 
 	double duration;                                                         //변수 설정
 	duration = static_cast<double>(cv::getTickCount());       //초기 시작 시간 설정
-	cv::Mat output(src.rows, src.cols, src.type());
+	cv::Mat output;
 	cv::Mat backSub = subBackground(src, depth);
 	cv::Mat YellowMap = DetectColorMap(src, backSub);
 	cv::Mat MapSub = DeleteSub(YellowMap, backSub);
@@ -80,7 +80,7 @@ cv::Mat ColorBasedTracker::calcImage(cv::Mat src, cv::Mat depth){
 		cv::rectangle(src2, BOI.at(i).second, cv::Scalar(0,0,255));
 	cv::Rect HandBox = FindHandBlob(BOI);
 	if(HandBox.width > 0)
-		cv::rectangle(src, HandBox, cv::Scalar(0,255,0), 2);
+		cv::rectangle(src2, HandBox, cv::Scalar(0,255,0), 2);
 	cv::imshow("src2", src2);
 
 	//compose with background
@@ -104,6 +104,26 @@ cv::Mat ColorBasedTracker::calcImage(cv::Mat src, cv::Mat depth){
 	//cv::waitKey(10);
 
 	//backSub.release();
+
+	//이미지 생성부
+	const int extra = 2;
+	HandBox.x -= extra;
+	HandBox.y -= extra;
+	HandBox.width += extra;
+	HandBox.height += extra;
+	if(HandBox.x <= 0 || HandBox.y <= 0)	output.create(0, 0, CV_8UC1);
+	else{
+		output.create(src.rows, src.cols, src.type());
+		int x_prime = HandBox.x + HandBox.width;
+		int y_prime = HandBox.y + HandBox.height;
+		for(int h = 0; h < src.rows; h++)
+			for(int w = 0; w < src.cols; w++){
+				if(HandBox.x <= w && w <= x_prime && HandBox.y <= h && h <= y_prime)
+					output.at<cv::Vec3b>(h,w) = src.at<cv::Vec3b>(h,w);
+				else
+					output.at<cv::Vec3b>(h,w) = ColorBackGround.at<cv::Vec3b>(h,w);
+			}
+	}
 
 	return output;
 }

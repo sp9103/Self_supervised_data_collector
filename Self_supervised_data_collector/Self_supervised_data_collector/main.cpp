@@ -61,6 +61,7 @@ int main(){
 	//arm.TorqueOff();
 	printf("If u want to start program, press any key.\n");
 	getch();
+	arm.TorqueOff();
 
 	//디렉토리 생성
 	itoa(presentSecond, dirName, 10);
@@ -82,6 +83,7 @@ int main(){
 
 	printf("\nIf u save background, press any key\n");
 	getch();
+	arm.TorqueOn();
 
 	while(!kinectManager.isThreadDead()){
 
@@ -124,7 +126,7 @@ int main(){
 	motionHandler.Deinitialize();
 	kinectManager.Deinitialize();
 
-	int Initpos[] = {0, 0, 0, 0, 0, 0, 2622, 1534, 3531};
+	int Initpos[] = {0, 0, 0, 0, 0, 0, 2622, 1534, 2100};
 	arm.SetGoalPosition(Initpos);
 	WaitUntilMoveEnd(&arm);
 	arm.TorqueOff();
@@ -162,7 +164,7 @@ void ControllerInit(RobotArm *robot){
 	int vel[] = {1000, 1000, 1000, 1000, 1000, 1000, 50, 50, 50};
 	//Upper Left, UpperRight, Thumb
 
-	int Initpos[] = {0, 0, 0, 0, 0, 0, 2622, 1534, 3531};
+	int Initpos[] = {0, 0, 0, 0, 0, 0, 2622, 1534, 2100};
 
 	robot->Init(6,3, robotid);
 
@@ -170,7 +172,7 @@ void ControllerInit(RobotArm *robot){
 	robot->TorqueOn();
 
 	robot->SetGoalVelocity(vel);
-
+	//robot->SetGoalPosition(Initpos);
 }
 
 void CreateRGBDdir(const char* className){
@@ -204,6 +206,8 @@ void CreateRGBDdir(const char* className){
 
 void writeData(cv::Mat RGBimg, cv::Mat DEPTHimg, cv::Mat pointCloud, ColorBasedTracker *cbTracker, int* angle, char* path, const int count){
 	cv::Mat processImg = cbTracker->calcImage(RGBimg, DEPTHimg);
+	if(processImg.rows == 0)	return;
+
 	char pathBuf[256], buf[256], id[256];
 	sprintf(pathBuf, "%s\\%s", DEFAULT_PATH, path);
 	itoa(count, id, 10);
