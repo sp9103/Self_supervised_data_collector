@@ -103,8 +103,8 @@ int main(){
 		//motionHandler.ForwardEnd(&arm);
 
 		printf("Sampling start....");
-		arm.GetPresPosition(getAngle);
 		while(1){
+			arm.GetPresPosition(getAngle);
 			//angle sampling - limit 이내의 각도 샘플링
 			memcpy(tmpAngle, getAngle, sizeof(int) * 9);
 			for(int i = 0; i < NUM_XEL; i++){

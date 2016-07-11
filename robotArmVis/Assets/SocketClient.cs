@@ -210,7 +210,7 @@ public class SocketClient : MonoBehaviour {
 
 			length = (fingerPos[i] - proj).magnitude / 2.0f;
 			m_finger[i] = (GameObject)Instantiate(FingerPrefabs, (fingerPos[i] - proj) / 2.0f +virtualJoint[5] + proj, new Quaternion(0.0f, 0.0f, 0.0f, 0.0f));
-			m_finger[i].transform.localScale = new Vector3(2.0f, length, 2.0f);
+			m_finger[i].transform.localScale = new Vector3(5.0f, length, 5.0f);
 			m_finger[i].transform.up = (fingerPos[i] - proj).normalized;
 			m_finger[i].transform.parent = this.transform;
 		}
@@ -218,7 +218,7 @@ public class SocketClient : MonoBehaviour {
 		//Thumb
 		m_finger[2] = (GameObject)Instantiate(FingerPrefabs, virtualJoint[5]+(fingerPos[2]/2.0f), new Quaternion(0.0f, 0.0f, 0.0f, 0.0f));
 		length = Mathf.Abs(fingerPos[2].magnitude) / 2.0f;
-		m_finger[2].transform.localScale = new Vector3(2.0f, length, 2.0f);
+		m_finger[2].transform.localScale = new Vector3(5.0f, length, 5.0f);
 		m_finger[2].transform.up = fingerPos[2].normalized;
 		m_finger[2].transform.parent = this.transform;
 		
@@ -268,14 +268,14 @@ public class SocketClient : MonoBehaviour {
 			
 			length = (fingerPos[i] - proj).magnitude / 2.0f;
 			m_finger[i].transform.position = (fingerPos[i] - proj) / 2.0f +virtualJoint[5] + proj;
-			m_finger[i].transform.localScale = new Vector3(2.0f, length, 2.0f);
+			m_finger[i].transform.localScale = new Vector3(5.0f, length, 5.0f);
 			m_finger[i].transform.up = (fingerPos[i] - proj).normalized;
 		}
 		
 		//Thumb
 		m_finger [2].transform.position = virtualJoint [5] + (fingerPos [2] / 2.0f);
 		length = Mathf.Abs(fingerPos[2].magnitude) / 2.0f;
-		m_finger[2].transform.localScale = new Vector3(2.0f, length, 2.0f);
+		m_finger[2].transform.localScale = new Vector3(5.0f, length, 5.0f);
 		m_finger[2].transform.up = fingerPos[2].normalized;
 	}
 
