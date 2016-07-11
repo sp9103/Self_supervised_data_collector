@@ -2,6 +2,7 @@
 #include <afx.h>
 #include <time.h>
 #include <stdlib.h>
+#include <random>
 
 #include "ARMSDK\include\ARMSDK.h"
 #include "KinectMangerThread.h"
@@ -40,12 +41,19 @@ int main(){
 	char dirName[256];
 	float averBox[NUM_XEL] = {0};
 
+	//uniform random sampler
+	const int range_from  = 0;
+	const int range_to    = 10;
+	std::random_device                  rand_dev;
+	std::mt19937                        generator(rand_dev());
+	std::uniform_int_distribution<int>  distr_arm(-5000, 5000);
+	std::uniform_int_distribution<int>  distr_finger(-200, 200);
+
 	//initialize
 	motionHandler.Initialize();
 	kinectManager.Initialize(RobotROI);
 
 	int presentSecond = time(NULL);
-	srand(presentSecond);
 
 #ifdef RIGHT_ARM_USE
 	dxl_write_dword(arm.DXL_Get_Port(), 7, NX::P_HOMING_OFFSET_LL,  62750, 0);
@@ -100,7 +108,8 @@ int main(){
 			//angle sampling - limit 이내의 각도 샘플링
 			memcpy(tmpAngle, getAngle, sizeof(int) * 9);
 			for(int i = 0; i < NUM_XEL; i++){
-				sampleAngleBox[i] = (rand() % sampleAngleLimit[i]) - sampleAngleLimit[i] / 2;
+				if(i < NUM_JOINT) sampleAngleBox[i] = distr_arm(generator);
+				else				sampleAngleBox[i] = distr_finger(generator);
 				tmpAngle[i] += sampleAngleBox[i];
 			}
 			//motion check

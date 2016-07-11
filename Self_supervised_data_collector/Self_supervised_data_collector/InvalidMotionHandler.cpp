@@ -6,7 +6,7 @@ InvalidMotionHandler::InvalidMotionHandler(void)
 	DeinitCheck = true;
 
 	ROI3D.first = cv::Point3f(259.f, -300.f, -100.f);
-	ROI3D.second = cv::Point3f(500.f, 55.f, 50.f);
+	ROI3D.second = cv::Point3f(500.f, 55.f, 0.f);
 }
 
 
