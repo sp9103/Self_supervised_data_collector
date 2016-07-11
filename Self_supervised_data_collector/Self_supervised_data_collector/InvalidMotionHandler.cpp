@@ -21,8 +21,8 @@ bool InvalidMotionHandler::InvalidCheck(int *angle){
 	bool retVal = false;
 	const int FingerMaxLimit[3] = {2940, 1600, 2100};
 	const int FingerMinLimit[3] = {2480, 1150, 1800};
-	const int JointMaxLimit[6] = {250950, 148000, 250950, 230000, 151875, 66880};
-	const int JointMinLimit[6] = {-250950,-148000, -250950, -56600, -151875, -62800};
+	const int JointMaxLimit[6] = {250950, 148000, 250950, 230000, 145000, 50000};
+	const int JointMinLimit[6] = {-250950,-148000, -250950, -56600, -145000, -50000};
 
 	for(int i = 0; i < NUM_JOINT; i++){
 		int angleOrigin = angle[i];

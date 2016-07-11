@@ -23,6 +23,7 @@ int WaitUntilMoveEnd(RobotArm *robot);
 void ControllerInit(RobotArm *robot);
 void CreateRGBDdir(const char* className);
 void writeDepthData(cv::Mat src, char* path, char* name);
+int compareMaxSubPos(int *goal, int *pres);
 
 int main(){
 	//class 
@@ -37,6 +38,7 @@ int main(){
 	int sampleAngleBox[9], count = 0;
 	const int sampleAngleLimit[9] = {10000, 10000, 10000, 10000, 10000, 10000, 400, 400, 400};
 	char dirName[256];
+	float averBox[NUM_XEL] = {0};
 
 	//initialize
 	motionHandler.Initialize();
@@ -126,6 +128,12 @@ int main(){
 		if(writeData(img, depth, pointCloud, &tracker, completePosition, dirName, count)){
 			count++;
 			printf("[%d] data saveComplete.\n", count);
+			printf("average : ");
+			for(int i = 0; i < NUM_XEL; i++){
+				averBox[i] = (averBox[i] * (count - 1) + sampleAngleBox[i]) / (float)count;
+				printf("%.1f ", averBox[i]);
+			}
+			printf("\n");
 		}else{
 			printf("Move previous position.....");
 			arm.SetGoalPosition(getAngle);
@@ -162,13 +170,17 @@ int WaitUntilMoveEnd(RobotArm *robot){
 	int checkTerm = 10;
 	int presVel[NUM_XEL];
 	int fingerLoad[NUM_FINGER];
+	int goalPos[NUM_XEL], presPos[NUM_XEL];
 
 	while(1){
 		_sleep(33);
 		robot->GetPresVelocity(presVel);
-		//robot->GetFingerLoad(fingerLoad);
+		robot->GetGoalPosition(goalPos);
+		robot->GetPresPosition(presPos);
 
-		if(isAllZero(presVel) == 1)
+		int maxSub = compareMaxSubPos(goalPos, presPos);
+		//robot->GetFingerLoad(fingerLoad);
+		if(isAllZero(presVel) == 1 || maxSub < 10)
 			return 1;
 	}
 	return 1;
@@ -269,4 +281,16 @@ void writeDepthData(cv::Mat src, char* path, char* name){
 	fwrite(&Type, sizeof(int), 1, fp);
 	for(int i = 0; i < src.rows * src.cols; i++)		fwrite(&src.at<float>(i), sizeof(float), 1, fp);
 	fclose(fp);
+}
+
+int compareMaxSubPos(int *goal, int *pres){
+	int maxSub = -1;
+
+	for(int i = 0; i < NUM_XEL; i++){
+		int sub = abs(goal[i] - pres[i]);
+
+		if(maxSub < sub)	maxSub = sub;
+	}
+
+	return maxSub;
 }
