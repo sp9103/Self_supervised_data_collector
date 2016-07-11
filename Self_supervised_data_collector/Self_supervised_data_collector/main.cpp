@@ -88,7 +88,7 @@ int main(){
 	while(!kinectManager.isThreadDead()){
 
 		//샘플링된 모션이 가능한 모션인지를 체크
-		int getAngle[9], tmpAngle[9];
+		int getAngle[9], tmpAngle[9], completePosition[9];
 
 		//motionHandler.ForwardEnd(&arm);
 
@@ -114,7 +114,7 @@ int main(){
 		printf("Move Robot.....");
 		arm.SetGoalPosition(tmpAngle);
 		WaitUntilMoveEnd(&arm);
-		arm.GetPresPosition(getAngle);
+		arm.GetPresPosition(completePosition);
 		printf("complete!\n");
 
 		//write file
@@ -123,9 +123,14 @@ int main(){
 		cv::Mat pointCloud = kinectManager.getPointCloud();
 		cv::imshow("cropImg", img);
 		cv::waitKey(1);
-		if(writeData(img, depth, pointCloud, &tracker, getAngle, dirName, count)){
+		if(writeData(img, depth, pointCloud, &tracker, completePosition, dirName, count)){
 			count++;
 			printf("[%d] data saveComplete.\n", count);
+		}else{
+			printf("Move previous position.....");
+			arm.SetGoalPosition(getAngle);
+			WaitUntilMoveEnd(&arm);
+			printf("complete!\n");
 		}
 	}
 
