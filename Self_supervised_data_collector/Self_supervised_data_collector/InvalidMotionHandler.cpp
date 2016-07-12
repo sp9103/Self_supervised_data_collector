@@ -61,9 +61,18 @@ bool InvalidMotionHandler::InvalidCheck(int *angle, int *prevAngle){
 #ifdef USING_SIMULATOR
 	//시뮬레이터 체크
 	RobotInfoData sendData = robotDataFormat;
+	armsdk::Pose3D xaxis;
 	for(int i = 0; i < 6; i++)
 		sendData.Angle[i] = angle[i];
-	fingerTransform(&sendData);
+	fingerTransform(&sendData, &xaxis);
+
+	//손목 각도 체크
+	float magx = sqrt(xaxis.x * xaxis.x + xaxis.y * xaxis.y + xaxis.z * xaxis.z);
+	float dotp = (xaxis.z * 1.f) / magx;
+	float ang = acos(dotp) * 180 / PI;
+	if(ang < 45.f)
+		return false;
+
 	retVal = robotvisServer.SendAndCheck(sendData);
 
 	//시뮬레이터 되돌리기
@@ -138,29 +147,33 @@ UINT WINAPI InvalidMotionHandler::simulateThread(LPVOID param){
 	return 1;
 }
 
-void InvalidMotionHandler::fingerTransform(RobotInfoData *src){
+void InvalidMotionHandler::fingerTransform(RobotInfoData *src, armsdk::Pose3D *xaxis, armsdk::Pose3D *yaxis, armsdk::Pose3D *zaxis){
 	veci angi(6);
 	for(int i = 0; i < 6; i++)	angi[i] = src->Angle[i];
 	vecd angd = kin.Value2Rad(angi);
-	armsdk::Pose3D CurrentPose, xaxis, yaxis, zaxis;
-	kin.EndAxis(angd, &CurrentPose, &xaxis, &yaxis, &zaxis);
+	armsdk::Pose3D CurrentPose, xaxis_, yaxis_, zaxis_;
+	kin.EndAxis(angd, &CurrentPose, &xaxis_, &yaxis_, &zaxis_);
 
 	cv::Mat m_RotMat(3,3,CV_32FC1);
 
 	cv::Mat invR;
 	invR.create(3,3,CV_32FC1);
 
-	invR.at<float>(0,0) = xaxis.x;
-	invR.at<float>(1,0) = xaxis.y;
-	invR.at<float>(2,0) = xaxis.z;
+	invR.at<float>(0,0) = xaxis_.x;
+	invR.at<float>(1,0) = xaxis_.y;
+	invR.at<float>(2,0) = xaxis_.z;
 
-	invR.at<float>(0,1) = yaxis.x;
-	invR.at<float>(1,1) = yaxis.y;
-	invR.at<float>(2,1) = yaxis.z;
+	invR.at<float>(0,1) = yaxis_.x;
+	invR.at<float>(1,1) = yaxis_.y;
+	invR.at<float>(2,1) = yaxis_.z;
 
-	invR.at<float>(0,2) = zaxis.x;
-	invR.at<float>(1,2) = zaxis.y;
-	invR.at<float>(2,2) = zaxis.z;
+	invR.at<float>(0,2) = zaxis_.x;
+	invR.at<float>(1,2) = zaxis_.y;
+	invR.at<float>(2,2) = zaxis_.z;
+
+	if(xaxis != NULL)	*xaxis = xaxis_;
+	if(yaxis != NULL)	*yaxis = yaxis_;
+	if(zaxis != NULL)	*zaxis = zaxis_;
 
 	//m_RotMat = invR.t();
 

@@ -30,7 +30,7 @@ private:
 	bool DeinitCheck;
 
 	static UINT WINAPI simulateThread(LPVOID param); // 쓰레드 함수.
-	void fingerTransform(RobotInfoData *src);
+	void fingerTransform(RobotInfoData *src, armsdk::Pose3D *xaxis = NULL, armsdk::Pose3D *yaxis = NULL, armsdk::Pose3D *zaxis = NULL);
 	void rot(cv::Mat rotMat, FingerInfo *fin);
 	bool inROI(armsdk::Pose3D end);
 };
