@@ -7,6 +7,16 @@ InvalidMotionHandler::InvalidMotionHandler(void)
 
 	ROI3D.first = cv::Point3f(259.f, -300.f, -100.f);
 	ROI3D.second = cv::Point3f(500.f, 55.f, 0.f);
+
+	robotDataFormat.Thumb.x = 130.0f;
+	robotDataFormat.Thumb.y = 0.0f;
+	robotDataFormat.Thumb.z = 140.0f;
+	robotDataFormat.upperLeft.x = -60.0f;
+	robotDataFormat.upperLeft.y = 45.0f;
+	robotDataFormat.upperLeft.z = 200.0f;
+	robotDataFormat.upperRight.x = -60.0f;
+	robotDataFormat.upperRight.y = -45.0f;
+	robotDataFormat.upperRight.z = 200.0f;
 }
 
 
@@ -17,7 +27,7 @@ InvalidMotionHandler::~InvalidMotionHandler(void)
 }
 
 //true == colision detected. false == safe
-bool InvalidMotionHandler::InvalidCheck(int *angle){
+bool InvalidMotionHandler::InvalidCheck(int *angle, int *prevAngle){
 	bool retVal = false;
 	const int FingerMaxLimit[3] = {2940, 1600, 2100};
 	const int FingerMinLimit[3] = {2480, 1150, 1800};
@@ -50,20 +60,20 @@ bool InvalidMotionHandler::InvalidCheck(int *angle){
 
 #ifdef USING_SIMULATOR
 	//시뮬레이터 체크
-	RobotInfoData sendData;
+	RobotInfoData sendData = robotDataFormat;
 	for(int i = 0; i < 6; i++)
 		sendData.Angle[i] = angle[i];
-	sendData.Thumb.x = 130.0f;
-	sendData.Thumb.y = 0.0f;
-	sendData.Thumb.z = 140.0f;
-	sendData.upperLeft.x = -60.0f;
-	sendData.upperLeft.y = 40.0f;
-	sendData.upperLeft.z = 170.0f;
-	sendData.upperRight.x = -60.0f;
-	sendData.upperRight.y = -40.0f;
-	sendData.upperRight.z = 170.0f;
 	fingerTransform(&sendData);
 	retVal = robotvisServer.SendAndCheck(sendData);
+
+	//시뮬레이터 되돌리기
+	if(!retVal){
+		sendData = robotDataFormat;
+		for(int i = 0; i < 6; i++)
+			sendData.Angle[i] = prevAngle[i];
+		fingerTransform(&sendData);
+		robotvisServer.SendAndCheck(sendData);
+	}
 #endif
 
 	return retVal;
@@ -85,18 +95,9 @@ bool InvalidMotionHandler::robotConnect(RobotArm *robotArm){
 	}
 
 #ifdef USING_SIMULATOR
-	RobotInfoData sendData;
+	RobotInfoData sendData = robotDataFormat;
 	for(int i = 0; i < 6; i++)
 		sendData.Angle[i] = angi[i];
-	sendData.Thumb.x = 40.0f;
-	sendData.Thumb.y = 0.0f;
-	sendData.Thumb.z = 70.0f;
-	sendData.upperLeft.x = -40.0f;
-	sendData.upperLeft.y = 30.0f;
-	sendData.upperLeft.z = 70.0f;
-	sendData.upperRight.x = -40.0f;
-	sendData.upperRight.y = -30.0f;
-	sendData.upperRight.z = 70.0f;
 	fingerTransform(&sendData);
 	robotvisServer.SendAndCheck(sendData);
 #endif

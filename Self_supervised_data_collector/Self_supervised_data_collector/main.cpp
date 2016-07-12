@@ -113,7 +113,7 @@ int main(){
 				tmpAngle[i] += sampleAngleBox[i];
 			}
 			//motion check
-			if(motionHandler.InvalidCheck(tmpAngle))
+			if(motionHandler.InvalidCheck(tmpAngle, getAngle))
 				break;
 		}
 		printf("complete!\n");
