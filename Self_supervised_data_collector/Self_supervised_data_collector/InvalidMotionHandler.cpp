@@ -61,16 +61,15 @@ bool InvalidMotionHandler::InvalidCheck(int *angle, int *prevAngle){
 #ifdef USING_SIMULATOR
 	//시뮬레이터 체크
 	RobotInfoData sendData = robotDataFormat;
-	armsdk::Pose3D xaxis;
+	armsdk::Pose3D xaxis, zaxis;
 	for(int i = 0; i < 6; i++)
 		sendData.Angle[i] = angle[i];
-	fingerTransform(&sendData, &xaxis);
+	fingerTransform(&sendData, &xaxis, NULL, &zaxis);
 
 	//손목 각도 체크
-	float magx = sqrt(xaxis.x * xaxis.x + xaxis.y * xaxis.y + xaxis.z * xaxis.z);
-	float dotp = (xaxis.z * 1.f) / magx;
-	float ang = acos(dotp) * 180 / PI;
-	if(ang < 45.f)
+	float angx = calcVecAng(xaxis, 0.0f, 0.0f, 1.f);
+	float angz = calcVecAng(zaxis, 0.0f, 0.0f, 1.f);
+	if(angx < 45.f || angz < 45.f)
 		return false;
 
 	retVal = robotvisServer.SendAndCheck(sendData);
@@ -224,4 +223,13 @@ bool InvalidMotionHandler::inROI(armsdk::Pose3D end){
 				return true;
 
 	return false;
+}
+
+float InvalidMotionHandler::calcVecAng(armsdk::Pose3D src, const float x, const float y, const float z){
+	float magsrc = sqrt(src.x * src.x + src.y * src.y + src.z * src.z);
+	float magbasis = sqrt(x*x + y*y + z*z);
+	float dotp = (src.x * x + src.y * y + src.z * z) / magsrc / magbasis;
+	float ang = acos(dotp) * 180 / PI;
+
+	return ang;
 }

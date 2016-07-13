@@ -33,5 +33,6 @@ private:
 	void fingerTransform(RobotInfoData *src, armsdk::Pose3D *xaxis = NULL, armsdk::Pose3D *yaxis = NULL, armsdk::Pose3D *zaxis = NULL);
 	void rot(cv::Mat rotMat, FingerInfo *fin);
 	bool inROI(armsdk::Pose3D end);
+	float calcVecAng(armsdk::Pose3D src, const float x, const float y, const float z);
 };
 
