@@ -67,9 +67,9 @@ bool InvalidMotionHandler::InvalidCheck(int *angle, int *prevAngle){
 	fingerTransform(&sendData, &xaxis, NULL, &zaxis);
 
 	//손목 각도 체크
-	float angx = calcVecAng(xaxis, 0.0f, 0.0f, 1.f);
-	float angz = calcVecAng(zaxis, 0.0f, 0.0f, 1.f);
-	if(angx < 45.f || angz < 45.f)
+	float angx = calcVecAng(xaxis, 0.0f, 0.0f, 1.f);						//손목의 손바닥 방향 벡터
+	float angz = calcVecAng(zaxis, 0.0f, 0.0f, -1.f);						//손목방향벡터
+	if(angx < 80.f || angx > 100.f || angz < 85.f || angz > 105.f)
 		return false;
 
 	retVal = robotvisServer.SendAndCheck(sendData);
