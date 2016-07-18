@@ -50,8 +50,8 @@ int main(){
 	std::uniform_int_distribution<int>  distr_finger(-200, 200);
 
 	//initialize
-	motionHandler.Initialize();
 	kinectManager.Initialize(RobotROI);
+	motionHandler.Initialize();
 
 	int presentSecond = time(NULL);
 
